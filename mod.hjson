@@ -1,23 +1,23 @@
 #the mod name as displayed in-game
-displayName: "Java Mod Template"
+displayName: "Better Factory"
 
 #the internal name of your mod
-name: "example-java-mod"
+name: "better-factory"
 
 #your name
-author: "You"
+author: "RMD"
 
 #the fully qualified main class of the mod
-main: "example.ExampleJavaMod"
+main: "com.rmd.Main"
 
 #the mod description as seen in the mod dialog
-description: "A Mindustry Java mod template."
+description: "A Mindustry Kotlin mod which added some new materials and factory."
 
 #the mod version
 version: 1.0
 
 #the minimum game build required to run this mod
-minGameVersion: 145
+minGameVersion: 146
 
 #this is a java mod
 java: true
