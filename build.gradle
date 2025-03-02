@@ -1,5 +1,4 @@
 apply plugin: "java"
-apply plugin: 'kotlin'
 
 version '1.0'
 
@@ -12,7 +11,7 @@ repositories{
 }
 
 java{
-    targetCompatibility = 17
+    targetCompatibility = 8
     sourceCompatibility = JavaVersion.VERSION_17
 }
 
@@ -98,15 +97,5 @@ task deploy(type: Jar){
             delete "$buildDir/libs/${project.archivesBaseName}Desktop.jar"
             delete "$buildDir/libs/${project.archivesBaseName}Android.jar"
         }
-    }
-}
-
-buildscript {
-    ext.kotlin_version = '1.9.23'
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
