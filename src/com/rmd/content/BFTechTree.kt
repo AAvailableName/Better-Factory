@@ -18,7 +18,7 @@ class BFTechTree {
 
         fun load() {
             margeNode(Blocks.oilExtractor) {
-                node(BFBlocks.fractionalDistillationTower, Seq.with(Produce(Liquids.oil))){}
+                Companion.node(BFBlocks.fractionalDistillationTower, Seq.with(Produce(Liquids.oil))){}
             }
 
 
