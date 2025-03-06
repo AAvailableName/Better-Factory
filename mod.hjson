@@ -11,10 +11,10 @@ author: "RMD"
 main: "com.rmd.Main"
 
 #the mod description as seen in the mod dialog
-description: "A Mindustry Kotlin mod which added some new materials and factory."
+description: "A Mindustry Java mod which added some new materials and factory."
 
 #the mod version
-version: 1.0
+version: beta 1.0.0
 
 #the minimum game build required to run this mod
 minGameVersion: 146

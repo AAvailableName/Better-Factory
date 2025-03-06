@@ -6,11 +6,13 @@ import com.rmd.content.BFLiquids;
 import com.rmd.content.BFTechTree;
 import mindustry.mod.Mod;
 
-class Main extends Mod{
+public class Main extends Mod{
+    @Override
     public void loadContent(){
-        BFBlocks.load();
         BFItems.load();
         BFLiquids.load();
+
+        BFBlocks.load();
         BFTechTree.load();
     }
 }

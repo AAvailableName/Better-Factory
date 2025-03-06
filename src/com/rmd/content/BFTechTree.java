@@ -8,25 +8,27 @@ import mindustry.game.Objectives;
 import mindustry.game.Objectives.Objective;
 import mindustry.type.ItemStack;
 
-import static mindustry.content.Blocks.oilExtractor;
+import static mindustry.content.Blocks.sporePress;
+import static mindustry.content.Liquids.oil;
+
 public final class BFTechTree {
     static TechTree.TechNode context = null;
 
     public static void load(){
-        // 石油化工
-        margeNode(oilExtractor, () -> {
-            node(BFBlocks.fdt, () -> {
-                node(BFItems.polyethylene, () -> {
-                    node(BFBlocks.polyethyleneCompressor, () -> {
-                        node(BFBlocks.plastaniumInjector, () -> {
-                            node(BFBlocks.catalyticCracker, () -> {});
-                        });
+        // oil industry
+        margeNode(sporePress, () -> {
+            node(BFBlocks.combustionHeater);
+
+            node(BFBlocks.fractionalDistillationTower, Seq.with(new Objectives.Produce(oil)), () -> {
+                node(BFBlocks.catalyticCracker);
+
+                node(BFBlocks.steamCracker, () -> {
+                    node(BFBlocks.polyethylenePolymerizer, () -> {
+                        node(BFBlocks.plastaniumInjector);
                     });
                 });
             });
         });
-
-
     }
 
 
