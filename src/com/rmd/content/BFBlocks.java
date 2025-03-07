@@ -1,5 +1,6 @@
 package com.rmd.content;
 
+import com.rmd.content.blocks.LimitedHeatCrafter;
 import mindustry.content.Fx;
 import mindustry.gen.Sounds;
 import mindustry.type.Category;
@@ -8,9 +9,9 @@ import mindustry.type.LiquidStack;
 import mindustry.world.Block;
 import mindustry.world.blocks.heat.HeatProducer;
 import mindustry.world.blocks.production.GenericCrafter;
-import mindustry.world.blocks.production.HeatCrafter;
 import mindustry.world.consumers.ConsumeItemFlammable;
 
+import static com.rmd.content.BFItems.oilResidue;
 import static com.rmd.content.BFItems.polyethylene;
 import static com.rmd.content.BFLiquids.*;
 import static mindustry.content.Items.*;
@@ -18,14 +19,14 @@ import static mindustry.content.Liquids.cryofluid;
 import static mindustry.content.Liquids.oil;
 
 public class BFBlocks {
-    public static HeatCrafter fractionalDistillationTower;
-
-    public static Block catalyticCracker, steamCracker, polyethylenePolymerizer, plastaniumInjector, combustionHeater;
+    public static Block fractionalDistillationTower, catalyticCracker, steamCracker, polyethylenePolymerizer, plastaniumInjector,
+            combustionHeater, powerHeater;
 
     public static void load() {
         // oil -> naphtha + heavy oil + pyratite
-        fractionalDistillationTower = new HeatCrafter("fractional-distillation-tower"){{
+        fractionalDistillationTower = new LimitedHeatCrafter("fractional-distillation-tower"){{
             requirements(Category.crafting, ItemStack.with(copper, 330, graphite, 175, silicon, 240, titanium, 400));
+            description = "Converts oil into naphtha and heavy oil, signing the start of the petroleum industry.";
             health = 1660;
             size = 4;
             researchCostMultiplier = 2.4f;
@@ -43,30 +44,32 @@ public class BFBlocks {
             consumeCoolant(0.4f).optional(true, true);
 
             heatRequirement = 8f;
-            maxEfficiency = 1f;
         }};
 
         // heavy oil -> naphtha
-        catalyticCracker = new HeatCrafter("catalytic-cracker"){{
+        catalyticCracker = new LimitedHeatCrafter("catalytic-cracker"){{
+            description = "Uses catalysts to convert heavy oil into naphtha, while producing oil residue.";
             requirements(Category.crafting, ItemStack.with(copper, 240, graphite, 160, silicon, 150, titanium, 200));
             health = 720;
             size = 3;
-            craftTime = 60f;
+            craftTime = 45f;
             liquidCapacity = 120f;
             craftEffect = Fx.steam;
             ambientSound = Sounds.steam;
             hasPower = true;
             hasLiquids = true;
+            hasItems = true;
             outputLiquid = new LiquidStack(naphtha, 1f);
+            outputItem = new ItemStack(oilResidue, 3);
             consumePower(2f);
             consumeLiquid(heavyOil, 0.5f);
 
             heatRequirement = 4f;
-            maxEfficiency = 1f;
         }};
 
         // naphtha -> ethylene
-        steamCracker = new HeatCrafter("steam-cracker"){{
+        steamCracker = new LimitedHeatCrafter("steam-cracker"){{
+            description = "Cracks naphtha into ethylene.";
             requirements(Category.crafting, ItemStack.with(copper, 160, graphite, 80, silicon, 80, titanium, 280));
             health = 560;
             size = 2;
@@ -81,11 +84,11 @@ public class BFBlocks {
             consumeLiquids(LiquidStack.with(cryofluid, 0.3f, naphtha, 1f));
 
             heatRequirement = 15f;
-            maxEfficiency = 1f;
         }};
 
         // ethylene -> polyethylene
         polyethylenePolymerizer = new GenericCrafter("polyethylene-polymerizer"){{
+            description = "Polymerizes ethylene to produce inexpensive plastic.";
             requirements(Category.crafting, ItemStack.with(copper, 160, graphite, 80, silicon, 80, titanium, 280));
             health = 560;
             size = 2;
@@ -103,7 +106,8 @@ public class BFBlocks {
 
         // polyethylene + titanium -> plastanium
         plastaniumInjector = new GenericCrafter("plastanium-injector"){{
-            requirements(Category.crafting, ItemStack.with(copper, 160, graphite, 80, silicon, 80, titanium, 280));
+            description = "Fuses plastic with titanium to create plastanium.";
+            requirements(Category.crafting, ItemStack.with(copper, 160, polyethylene, 120, silicon, 80, titanium, 280));
             health = 560;
             size = 2;
             craftTime = 120f;
@@ -118,17 +122,30 @@ public class BFBlocks {
         }};
 
         combustionHeater = new HeatProducer("combustion-heater"){{
-            requirements(Category.crafting, ItemStack.with(copper, 160, graphite, 80, silicon, 50));
+            description = "Cheapness is its greatest advantage.";
+            requirements(Category.crafting, ItemStack.with(copper, 80, graphite, 30, silicon, 25));
             health = 350;
             size = 2;
-            craftTime = 30f;
-            researchCostMultiplier = 1.6f;
+            craftTime = 120f;
             consume(new ConsumeItemFlammable());
             rotateDraw = false;
             ambientSound = Sounds.extractLoop;
             ambientSoundVolume = 0.08F;
             regionRotated1 = 2;
-            heatOutput = 6.0F;
+            heatOutput = 4.0F;
+        }};
+
+        powerHeater = new HeatProducer("power-heater") {{
+            description = "It's worth it.";
+            requirements(Category.crafting, ItemStack.with(copper, 400, graphite, 150, silicon, 80, titanium, 80));
+            researchCostMultiplier = 2.0f;
+            rotateDraw = false;
+            size = 3;
+            heatOutput = 12.0F;
+            regionRotated1 = 1;
+            ambientSound = Sounds.hum;
+            itemCapacity = 0;
+            consumePower(6f);
         }};
     }
 }

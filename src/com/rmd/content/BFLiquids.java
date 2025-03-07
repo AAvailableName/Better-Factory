@@ -26,7 +26,7 @@ public class BFLiquids {
             canStayOn.add(oil);
         }};
 
-        heavyOil = new Liquid("heavy-oil", Color.valueOf("272727")){{
+        heavyOil = new Liquid("heavy-oil", Color.valueOf("232323")){{
             heatCapacity = 0.75f;
             viscosity = 1.7f;
             explosiveness = 1.1f;
@@ -34,11 +34,11 @@ public class BFLiquids {
             temperature = 1.4f;
             effect = StatusEffects.tarred;
             boilPoint = 2.2f;
-            gasColor = Color.grays(0.7f);
-            barColor = Color.grays(0.85f);
+            gasColor = Color.grays(0.3f);
+            barColor = Color.grays(0.15f);
         }};
 
-        ethylene = new Liquid("ethylene", Color.valueOf("a0a0a0")){{
+        ethylene = new Liquid("ethylene", Color.valueOf("f2eeb9")){{
             heatCapacity = 1.2f;
             viscosity = 0.3f;
             explosiveness = 1.55f;
@@ -46,9 +46,8 @@ public class BFLiquids {
             temperature = 0.2f;
             effect = StatusEffects.freezing;
             boilPoint = 0.2f;
-            barColor = Color.valueOf("b0b0b0");
-            gasColor = Color.valueOf("a0a0a0");
-            gasColor.a = 0.5f;
+            barColor = Color.valueOf("f2eeb9");
+            gasColor = Color.valueOf("fcfbe2");
             canStayOn.add(water);
             canStayOn.add(oil);
         }};
