@@ -1,6 +1,7 @@
 package com.rmd.content;
 
-import com.rmd.content.blocks.LimitedHeatCrafter;
+import com.rmd.content.blocks.EnvironmentalHeatCrafter;
+import com.rmd.content.blocks.EnvironmentalHeatProducer;
 import mindustry.content.Fx;
 import mindustry.gen.Sounds;
 import mindustry.type.Category;
@@ -20,11 +21,11 @@ import static mindustry.content.Liquids.oil;
 
 public class BFBlocks {
     public static Block fractionalDistillationTower, catalyticCracker, steamCracker, polyethylenePolymerizer, plastaniumInjector,
-            combustionHeater, powerHeater;
+            combustionHeater, powerHeater, environmentalHeater;
 
     public static void load() {
         // oil -> naphtha + heavy oil + pyratite
-        fractionalDistillationTower = new LimitedHeatCrafter("fractional-distillation-tower"){{
+        fractionalDistillationTower = new EnvironmentalHeatCrafter("fractional-distillation-tower"){{
             requirements(Category.crafting, ItemStack.with(copper, 330, graphite, 175, silicon, 240, titanium, 400));
             description = "Converts oil into naphtha and heavy oil, signing the start of the petroleum industry.";
             health = 1660;
@@ -47,7 +48,7 @@ public class BFBlocks {
         }};
 
         // heavy oil -> naphtha
-        catalyticCracker = new LimitedHeatCrafter("catalytic-cracker"){{
+        catalyticCracker = new EnvironmentalHeatCrafter("catalytic-cracker"){{
             description = "Uses catalysts to convert heavy oil into naphtha, while producing oil residue.";
             requirements(Category.crafting, ItemStack.with(copper, 240, graphite, 160, silicon, 150, titanium, 200));
             health = 720;
@@ -68,7 +69,7 @@ public class BFBlocks {
         }};
 
         // naphtha -> ethylene
-        steamCracker = new LimitedHeatCrafter("steam-cracker"){{
+        steamCracker = new EnvironmentalHeatCrafter("steam-cracker"){{
             description = "Cracks naphtha into ethylene.";
             requirements(Category.crafting, ItemStack.with(copper, 160, graphite, 80, silicon, 80, titanium, 280));
             health = 560;
@@ -146,6 +147,20 @@ public class BFBlocks {
             ambientSound = Sounds.hum;
             itemCapacity = 0;
             consumePower(6f);
+        }};
+
+        environmentalHeater = new EnvironmentalHeatProducer("environmental-heater"){{
+            description = "What?";
+            requirements(Category.crafting, ItemStack.with(copper, 400, graphite, 240, silicon, 660, titanium, 320));
+            researchCostMultiplier = 4.0f;
+            rotateDraw = false;
+            size = 3;
+            heatOutput = 25.0F;
+            regionRotated1 = 1;
+            ambientSound = Sounds.hum;
+            itemCapacity = 0;
+            consumePower(12f);
+            range = 200f;
         }};
     }
 }
