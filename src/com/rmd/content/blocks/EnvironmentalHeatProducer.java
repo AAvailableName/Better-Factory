@@ -48,10 +48,23 @@ public class EnvironmentalHeatProducer extends HeatProducer {
         }
 
         public void distributeHeat() {
+            Seq<EnvironmentalHeatReceiver> cur = new Seq<>();
+
             Vars.indexer.eachBlock(this, range, b -> b instanceof EnvironmentalHeatReceiver, b -> {
                 var receiver = (EnvironmentalHeatReceiver)b;
 
-                if (receiver.heat() < receiver.heatRequirement()) receivers.add(receiver);
+                cur.add(receiver);
+            });
+
+            cur.forEach(receiver -> {
+                if (!receivers.contains(receiver)) receivers.add(receiver);
+            });
+
+            receivers.forEach(receiver -> {
+                if (!cur.contains(receiver)) {
+                    receiver.releaseReceiver(this);
+                    receivers.remove(receiver);
+                }
             });
 
             Seq<EnvironmentalHeatReceiver> leftDown = new Seq<>();
@@ -71,8 +84,6 @@ public class EnvironmentalHeatProducer extends HeatProducer {
             float heatPerCrafter = realHeat / leftDown.size;
 
             leftDown.forEach(receiver -> receiver.receiveHeat(this, heatPerCrafter));
-
-            receivers.clear();
         }
 
         public void drawSelect() {

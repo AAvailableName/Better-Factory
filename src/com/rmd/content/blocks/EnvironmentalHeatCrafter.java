@@ -30,7 +30,7 @@ public class EnvironmentalHeatCrafter extends LimitedHeatCrafter {
             heat += (float) (envHeatProduce.values().stream().mapToDouble(f -> f).sum());
 
             envHeatProduce.keySet().forEach(b -> {
-                if (b.dead || !b.isValid() || !b.enabled) envHeatProduce.remove(b);
+                if (b.dead || !b.enabled || b.power.status <= 0) releaseReceiver(b);
             });
         }
 
@@ -38,6 +38,11 @@ public class EnvironmentalHeatCrafter extends LimitedHeatCrafter {
         public void receiveHeat(Building provider, float heat) {
             if (envHeatProduce.containsKey(provider)) envHeatProduce.replace(provider, heat);
             else envHeatProduce.put(provider, heat);
+        }
+
+        @Override
+        public void releaseReceiver(Building provider) {
+            envHeatProduce.remove(provider);
         }
 
         @Override

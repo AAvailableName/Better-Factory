@@ -1,13 +1,16 @@
 package com.rmd.content;
 
+import arc.graphics.Color;
 import com.rmd.content.blocks.EnvironmentalHeatCrafter;
 import com.rmd.content.blocks.EnvironmentalHeatProducer;
 import mindustry.content.Fx;
+import mindustry.entities.bullet.ArtilleryBulletType;
 import mindustry.gen.Sounds;
 import mindustry.type.Category;
 import mindustry.type.ItemStack;
 import mindustry.type.LiquidStack;
 import mindustry.world.Block;
+import mindustry.world.blocks.defense.turrets.ItemTurret;
 import mindustry.world.blocks.heat.HeatProducer;
 import mindustry.world.blocks.production.GenericCrafter;
 import mindustry.world.consumers.ConsumeItemFlammable;
@@ -21,7 +24,7 @@ import static mindustry.content.Liquids.oil;
 
 public class BFBlocks {
     public static Block fractionalDistillationTower, catalyticCracker, steamCracker, polyethylenePolymerizer, plastaniumInjector,
-            combustionHeater, powerHeater, environmentalHeater;
+            combustionHeater, powerHeater, environmentalHeater, tripleGunMarkVII;
 
     public static void load() {
         // oil -> naphtha + heavy oil + pyratite
@@ -161,6 +164,46 @@ public class BFBlocks {
             itemCapacity = 0;
             consumePower(12f);
             range = 200f;
+        }};
+
+        tripleGunMarkVII = new ItemTurret("triple-gun-mark-VII"){{
+            description = "Seems Large!";
+            requirements(Category.turret, ItemStack.with(copper, 500, graphite, 650, silicon, 800, titanium, 1120, plastanium, 400, polyethylene, 360));
+            researchCostMultiplier = 1.8f;
+            health = 1680;
+            size = 5;
+            reload = 1200f;
+            ammoPerShot = 50;
+            rotateSpeed = 3f;
+            maxAmmo = 9;
+            inaccuracy = 12f;
+            shoot.shotDelay = 3F;
+            shoot.shots = 3;
+            range = 600f;
+            shake = 6f;
+            shootSound = Sounds.shootBig;
+            recoil = 10f;
+            recoilTime = 60f;
+            minWarmup = 80f;
+
+            consumeCoolant(1.5f).optional(true, true);
+            coolantMultiplier = 0.5f;
+
+            ammo(titanium, new ArtilleryBulletType(4f, 620){{
+                targetAir = false;
+                lifetime = 80.0F;
+                width = height = 14.0F;
+                collides = false;
+                splashDamageRadius = 32f;
+                splashDamage = 310f;
+                reflectable = false;
+                drag = 0.02f;
+                trailColor = Color.yellow;
+                trailLength = 20;
+                trailWidth = 8f;
+                buildingDamageMultiplier = 1.2f;
+                hitShake = 9f;
+            }});
         }};
     }
 }

@@ -31,21 +31,21 @@ public class BFLiquids {
             viscosity = 1.7f;
             explosiveness = 1.1f;
             flammability = 1.2f;
-            temperature = 1.4f;
+            temperature = 1.3f;
             effect = StatusEffects.tarred;
-            boilPoint = 2.2f;
-            gasColor = Color.grays(0.3f);
-            barColor = Color.grays(0.15f);
+            boilPoint = 3.5f;
+            gasColor = Color.grays(0.5f);
+            barColor = Color.grays(0.35f);
         }};
 
         ethylene = new Liquid("ethylene", Color.valueOf("f2eeb9")){{
             heatCapacity = 1.2f;
             viscosity = 0.3f;
-            explosiveness = 1.55f;
-            flammability = 1.7f;
-            temperature = 0.2f;
+            explosiveness = 1.25f;
+            flammability = 1.1f;
+            temperature = 0.5f;
             effect = StatusEffects.freezing;
-            boilPoint = 0.2f;
+            boilPoint = 0.9f;
             barColor = Color.valueOf("f2eeb9");
             gasColor = Color.valueOf("fcfbe2");
             canStayOn.add(water);
