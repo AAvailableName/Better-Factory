@@ -1,6 +1,5 @@
 package com.rmd.content.blocks;
 
-import mindustry.gen.Building;
 import mindustry.world.meta.Stat;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,7 +16,7 @@ public class EnvironmentalHeatCrafter extends LimitedHeatCrafter {
     }
 
     public class EnvironmentalHeatCrafterBuild extends LimitedHeatCrafter.LimitedHeatCrafterBuild implements EnvironmentalHeatReceiver {
-        public ConcurrentHashMap<Building, Float> envHeatProduce = new ConcurrentHashMap<>();
+        private ConcurrentHashMap<EnvironmentalHeatProducer.EnvironmentalHeatProducerBuild, Float> envHeat = new ConcurrentHashMap<>();
 
         public EnvironmentalHeatCrafterBuild() {
             super();
@@ -27,22 +26,19 @@ public class EnvironmentalHeatCrafter extends LimitedHeatCrafter {
         public void updateTile() {
             super.updateTile();
 
-            heat += (float) (envHeatProduce.values().stream().mapToDouble(f -> f).sum());
+            envHeat.keySet().forEach(EnvironmentalHeatProducer.EnvironmentalHeatProducerBuild::updateTile);
 
-            envHeatProduce.keySet().forEach(b -> {
-                if (b.dead || !b.enabled || b.power.status <= 0) releaseReceiver(b);
-            });
+            heat += (float) envHeat.values().stream().mapToDouble(f -> f).sum();
+            envHeat.clear();
         }
 
         @Override
-        public void receiveHeat(Building provider, float heat) {
-            if (envHeatProduce.containsKey(provider)) envHeatProduce.replace(provider, heat);
-            else envHeatProduce.put(provider, heat);
-        }
-
-        @Override
-        public void releaseReceiver(Building provider) {
-            envHeatProduce.remove(provider);
+        public void receiveHeat(EnvironmentalHeatProducer.EnvironmentalHeatProducerBuild producer, float heat) {
+            if (envHeat.containsKey(producer)){
+                envHeat.replace(producer, Math.min(Math.max(heat, 0f), producer.heat));
+            }else {
+                envHeat.put(producer, Math.min(Math.max(heat, 0f), producer.heat));
+            }
         }
 
         @Override

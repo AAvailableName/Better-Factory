@@ -35,55 +35,26 @@ public class EnvironmentalHeatProducer extends HeatProducer {
     }
 
     public class EnvironmentalHeatProducerBuild extends HeatProducerBuild {
-        private final Seq<EnvironmentalHeatReceiver> receivers = new Seq<>();
-        private float realHeat = heat;
+        @Override
+        public void update() {
+            super.update();
+
+            update = false;
+        }
 
         @Override
         public void updateTile() {
             super.updateTile();
 
-            realHeat = heat;
-
-            distributeHeat();
-        }
-
-        public void distributeHeat() {
-            Seq<EnvironmentalHeatReceiver> cur = new Seq<>();
+            Seq<EnvironmentalHeatReceiver> receivers = new Seq<>();
 
             Vars.indexer.eachBlock(this, range, b -> b instanceof EnvironmentalHeatReceiver, b -> {
-                var receiver = (EnvironmentalHeatReceiver)b;
+                EnvironmentalHeatReceiver receiver = (EnvironmentalHeatReceiver) b;
 
-                cur.add(receiver);
+                receivers.add(receiver);
             });
 
-            cur.forEach(receiver -> {
-                if (!receivers.contains(receiver)) receivers.add(receiver);
-            });
-
-            receivers.forEach(receiver -> {
-                if (!cur.contains(receiver)) {
-                    receiver.releaseReceiver(this);
-                    receivers.remove(receiver);
-                }
-            });
-
-            Seq<EnvironmentalHeatReceiver> leftDown = new Seq<>();
-            // from small to big
-//            receivers.sort((a, b) -> (int) (a.heatRequirement() - b.heatRequirement()));
-
-            receivers.forEach(receiver -> {
-                float requirement = receiver.heatRequirement() - receiver.heat();
-
-                if (realHeat < requirement) leftDown.add(receiver);
-                else {
-                    receiver.receiveHeat(this, requirement);
-                    realHeat -= requirement;
-                }
-            });
-
-            float heatPerCrafter = realHeat / leftDown.size;
-
-            leftDown.forEach(receiver -> receiver.receiveHeat(this, heatPerCrafter));
+            receivers.forEach(receiver -> receiver.receiveHeat(this, heat));
         }
 
         public void drawSelect() {

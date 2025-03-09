@@ -10,8 +10,8 @@ import mindustry.game.Objectives.Objective;
 import mindustry.type.ItemStack;
 
 import static com.rmd.content.BFBlocks.*;
-import static com.rmd.content.BFItems.polyethylene;
 import static mindustry.content.Blocks.*;
+import static mindustry.content.Items.blastCompound;
 import static mindustry.content.Liquids.oil;
 
 public final class BFTechTree {
@@ -42,7 +42,7 @@ public final class BFTechTree {
         });
 
         margeNode(duo, () -> {
-            node(tripleGunMarkVII, Seq.with(new Objectives.Produce(polyethylene), new Objectives.SectorComplete(SectorPresets.nuclearComplex)));
+            node(tripleGunMarkVII, Seq.with(new Objectives.SectorComplete(SectorPresets.nuclearComplex), new Objectives.Produce(blastCompound)));
         });
     }
 
