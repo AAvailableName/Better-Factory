@@ -20,14 +20,16 @@ public final class BFTechTree {
     public static void load(){
         // oil industry
         margeNode(sporePress, () -> {
-            node(combustionHeater);
-
             node(fractionalDistillationTower, Seq.with(new Objectives.Produce(oil)), () -> {
                 node(catalyticCracker);
 
                 node(steamCracker, () -> {
                     node(polyethylenePolymerizer, () -> {
-                        node(plastaniumInjector);
+                        node(plastaniumInjector, () -> {
+                            node(largePlastaniumInjector);
+                        });
+
+                        node(largePolyethylenePolymerizer);
                     });
                 });
             });
@@ -42,7 +44,9 @@ public final class BFTechTree {
         });
 
         margeNode(duo, () -> {
-            node(tripleGunMarkVII, Seq.with(new Objectives.SectorComplete(SectorPresets.nuclearComplex), new Objectives.Produce(blastCompound)));
+            node(tripleGunMarkVII, Seq.with(new Objectives.SectorComplete(SectorPresets.impact0078), new Objectives.Produce(blastCompound)), () -> {
+                node(HPJ11CIWS, Seq.with(new Objectives.SectorComplete(SectorPresets.impact0078)));
+            });
         });
     }
 

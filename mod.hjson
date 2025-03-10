@@ -14,7 +14,7 @@ main: "com.rmd.Main"
 description: "A Mindustry Java mod which added some new materials and factory."
 
 #the mod version
-version: beta 1.0.3
+version: beta 1.0.4
 
 #the minimum game build required to run this mod
 minGameVersion: 146

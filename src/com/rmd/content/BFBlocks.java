@@ -207,10 +207,9 @@ public class BFBlocks {
             range = 200f;
         }};
 
-        // support titanium, pyratite, blast compound
         tripleGunMarkVII = new ItemTurret("triple-gun-mark-VII"){{
             description = "It has been built as the core of maritime defense, providing powerful firepower support.";
-            requirements(Category.turret, ItemStack.with(copper, 500, graphite, 650, silicon, 800, titanium, 1120, plastanium, 400, blastCompound, 400));
+            requirements(Category.turret, ItemStack.with(copper, 500, graphite, 650, silicon, 800, titanium, 1100, plastanium, 400, blastCompound, 400));
             researchCostMultiplier = 1.8f;
             health = 1980;
             size = 5;
@@ -218,10 +217,10 @@ public class BFBlocks {
             ammoPerShot = 50;
             rotateSpeed = 3f;
             maxAmmo = 300;
-            inaccuracy = 12f;
+            inaccuracy = 4f;
             shoot.shotDelay = 3F;
             shoot.shots = 3;
-            range = 600f;
+            range = 840f;
             shake = 3f;
             shootSound = Sounds.shootBig;
             recoil = 10f;
@@ -245,7 +244,20 @@ public class BFBlocks {
                 buildingDamageMultiplier = 1.5f;
                 hitShake = 4f;
                 hitEffect = Fx.blastExplosion;
-                limitRange();
+            }}, thorium, new BasicBulletType(12f, 960){{
+                targetAir = false;
+                lifetime = 120.0F;
+                collidesAir = false;
+                splashDamageRadius = 244f;
+                splashDamage = 200f;
+                reflectable = false;
+                drag = 0.002f;
+                trailColor = Color.yellow;
+                trailLength = 22;
+                trailWidth = 8f;
+                buildingDamageMultiplier = 1.5f;
+                hitShake = 6f;
+                hitEffect = Fx.blastExplosion;
             }}, pyratite, new BasicBulletType(12f, 75){{
                 targetAir = false;
                 lifetime = 80.0F;
@@ -260,7 +272,6 @@ public class BFBlocks {
                 buildingDamageMultiplier = 1.2f;
                 hitShake = 2f;
                 status = StatusEffects.burning;
-                limitRange();
             }}, blastCompound, new BasicBulletType(12f, 90){{
                 targetAir = false;
                 lifetime = 80.0F;
@@ -275,17 +286,18 @@ public class BFBlocks {
                 buildingDamageMultiplier = 2f;
                 hitShake = 9f;
                 hitEffect = new MultiEffect(Fx.blastExplosion, Fx.fireHit);
-                limitRange();
             }});
+
+            limitRange();
         }};
 
         HPJ11CIWS = new ItemTurret("HPJ-11-CIWS"){{
             description = "It's crazy, can the logistics hold up?";
-            requirements(Category.turret, ItemStack.with(copper, 500, graphite, 650, silicon, 800, titanium, 1120, plastanium, 400, blastCompound, 400));
+            requirements(Category.turret, ItemStack.with(copper, 500, graphite, 600, silicon, 500, titanium, 700, plastanium, 300));
             researchCostMultiplier = 1.8f;
             health = 880;
             size = 3;
-            reload = 3f;
+            reload = 0.06f;
             rotateSpeed = 75f;
             maxAmmo = 1000;
             inaccuracy = 30f;
@@ -299,14 +311,11 @@ public class BFBlocks {
             ammo(copper, new BasicBulletType(18f, 8){{
                 knockback = 0.1f;
                 lifetime = 120.0F;
-                limitRange();
             }}, lead, new BasicBulletType(18f, 9){{
                 knockback = 0.15f;
                 lifetime = 120.0F;
-                limitRange();
             }}, metaglass, new BasicBulletType(18f, 11){{
                 lifetime = 120.0F;
-                limitRange();
 
                 fragBullet = new BasicBulletType(18f, 9){{
                     fragLifeMin = 8f;
@@ -318,7 +327,6 @@ public class BFBlocks {
                 }};
             }}, polyethylene, new BasicBulletType(18f, 13){{
                 lifetime = 120.0F;
-                limitRange();
 
                 fragBullet = new BasicBulletType(18f, 10){{
                     fragLifeMin = 8f;
@@ -346,8 +354,6 @@ public class BFBlocks {
                 pierceBuilding = true;
                 pierceDamageFactor = 0.8f;
                 removeAfterPierce = false;
-
-                limitRange();
             }}, thorium, new BasicBulletType(18f, 18){{
                 knockback = 0.22f;
                 lifetime = 120.0F;
@@ -357,8 +363,6 @@ public class BFBlocks {
                 pierceBuilding = true;
                 pierceDamageFactor = 0.85f;
                 removeAfterPierce = false;
-
-                limitRange();
             }}, surgeAlloy, new BasicBulletType(18f, 27){{
                 knockback = 0.3f;
                 lifetime = 120.0F;
@@ -373,9 +377,11 @@ public class BFBlocks {
                 lightningLength = 20;
                 lightningDamage = 15f;
                 lightning = 3;
-
-                limitRange();
             }});
+
+            limitRange();
         }};
+
+
     }
 }
