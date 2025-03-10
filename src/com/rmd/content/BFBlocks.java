@@ -26,8 +26,11 @@ import static mindustry.content.Liquids.cryofluid;
 import static mindustry.content.Liquids.oil;
 
 public class BFBlocks {
-    public static Block fractionalDistillationTower, catalyticCracker, steamCracker, polyethylenePolymerizer, plastaniumInjector,
-            combustionHeater, powerHeater, environmentalHeater, tripleGunMarkVII;
+    public static Block fractionalDistillationTower, catalyticCracker, steamCracker,
+            polyethylenePolymerizer, largePolyethylenePolymerizer, plastaniumInjector, largePlastaniumInjector,
+            combustionHeater, powerHeater, environmentalHeater;
+
+    public static Block tripleGunMarkVII, HPJ11CIWS;
 
     public static void load() {
         // oil -> naphtha + heavy oil + pyratite
@@ -78,7 +81,7 @@ public class BFBlocks {
         steamCracker = new EnvironmentalHeatCrafter("steam-cracker"){{
             description = "Cracks naphtha into ethylene.";
             requirements(Category.crafting, ItemStack.with(copper, 160, graphite, 80, silicon, 80, titanium, 280));
-            health = 560;
+            health = 400;
             size = 2;
             craftTime = 60f;
             liquidCapacity = 120f;
@@ -111,11 +114,28 @@ public class BFBlocks {
             consumeLiquid(ethylene, 0.5f);
         }};
 
+        largePolyethylenePolymerizer = new GenericCrafter("large-polyethylene-polymerizer"){{
+            description = "Larger, faster, better.";
+            requirements(Category.crafting, ItemStack.with(copper, 500, graphite, 420, silicon, 500, titanium, 400, polyethylene, 240));
+            health = 700;
+            size = 3;
+            craftTime = 30f;
+            liquidCapacity = 120f;
+            craftEffect = Fx.formsmoke;
+            ambientSound = Sounds.hum;
+            hasPower = true;
+            hasItems = true;
+            hasLiquids = true;
+            outputItem = new ItemStack(polyethylene, 6);
+            consumePower(5f);
+            consumeLiquid(ethylene, 2f);
+        }};
+
         // polyethylene + titanium -> plastanium
         plastaniumInjector = new GenericCrafter("plastanium-injector"){{
             description = "Fuses plastic with titanium to create plastanium.";
             requirements(Category.crafting, ItemStack.with(copper, 160, polyethylene, 120, silicon, 80, titanium, 280));
-            health = 560;
+            health = 600;
             size = 2;
             craftTime = 120f;
             liquidCapacity = 120f;
@@ -128,12 +148,28 @@ public class BFBlocks {
             consumeItems(ItemStack.with(polyethylene, 3, titanium, 2));
         }};
 
+        largePlastaniumInjector = new GenericCrafter("large-plastanium-injector"){{
+            description = "Fuses plastic with titanium to create plastanium.";
+            requirements(Category.crafting, ItemStack.with(copper, 160, polyethylene, 120, silicon, 80, titanium, 280));
+            health = 850;
+            size = 3;
+            craftTime = 120f;
+            liquidCapacity = 120f;
+            craftEffect = Fx.formsmoke;
+            updateEffect = Fx.plasticburn;
+            hasPower = true;
+            hasItems = true;
+            outputItem = new ItemStack(plastanium, 12);
+            consumePower(6.25f);
+            consumeItems(ItemStack.with(polyethylene, 12, titanium, 8));
+        }};
+
         combustionHeater = new HeatProducer("combustion-heater"){{
             description = "Cheapness is its greatest advantage.";
             requirements(Category.crafting, ItemStack.with(copper, 80, graphite, 30, silicon, 25));
             health = 350;
-            size = 2;
-            craftTime = 120f;
+            size = 1;
+            craftTime = 180f;
             consume(new ConsumeItemFlammable());
             rotateDraw = false;
             ambientSound = Sounds.extractLoop;
@@ -144,22 +180,24 @@ public class BFBlocks {
 
         powerHeater = new HeatProducer("power-heater") {{
             description = "It's worth it.";
-            requirements(Category.crafting, ItemStack.with(copper, 400, graphite, 150, silicon, 80, titanium, 80));
+            requirements(Category.crafting, ItemStack.with(copper, 400, graphite, 150, silicon, 80, titanium, 80, polyethylene, 60));
             researchCostMultiplier = 2.0f;
             rotateDraw = false;
-            size = 3;
+            health = 900;
+            size = 2;
             heatOutput = 12.0F;
             regionRotated1 = 1;
             ambientSound = Sounds.hum;
             itemCapacity = 0;
-            consumePower(6f);
+            consumePower(5f);
         }};
 
         environmentalHeater = new EnvironmentalHeatProducer("environmental-heater"){{
             description = "What?";
-            requirements(Category.crafting, ItemStack.with(copper, 400, graphite, 240, silicon, 660, titanium, 320));
+            requirements(Category.crafting, ItemStack.with(copper, 400, graphite, 240, silicon, 660, titanium, 320, polyethylene, 300));
             researchCostMultiplier = 4.0f;
             rotateDraw = false;
+            health = 900;
             size = 3;
             heatOutput = 8.0F;
             regionRotated1 = 1;
@@ -169,16 +207,17 @@ public class BFBlocks {
             range = 200f;
         }};
 
+        // support titanium, pyratite, blast compound
         tripleGunMarkVII = new ItemTurret("triple-gun-mark-VII"){{
             description = "It has been built as the core of maritime defense, providing powerful firepower support.";
             requirements(Category.turret, ItemStack.with(copper, 500, graphite, 650, silicon, 800, titanium, 1120, plastanium, 400, blastCompound, 400));
             researchCostMultiplier = 1.8f;
-            health = 1680;
+            health = 1980;
             size = 5;
             reload = 3000f;
             ammoPerShot = 50;
             rotateSpeed = 3f;
-            maxAmmo = 150;
+            maxAmmo = 300;
             inaccuracy = 12f;
             shoot.shotDelay = 3F;
             shoot.shots = 3;
@@ -236,6 +275,105 @@ public class BFBlocks {
                 buildingDamageMultiplier = 2f;
                 hitShake = 9f;
                 hitEffect = new MultiEffect(Fx.blastExplosion, Fx.fireHit);
+                limitRange();
+            }});
+        }};
+
+        HPJ11CIWS = new ItemTurret("HPJ-11-CIWS"){{
+            description = "It's crazy, can the logistics hold up?";
+            requirements(Category.turret, ItemStack.with(copper, 500, graphite, 650, silicon, 800, titanium, 1120, plastanium, 400, blastCompound, 400));
+            researchCostMultiplier = 1.8f;
+            health = 880;
+            size = 3;
+            reload = 3f;
+            rotateSpeed = 75f;
+            maxAmmo = 1000;
+            inaccuracy = 30f;
+            range = 140f;
+            shootSound = Sounds.shoot;
+            consumeAmmoOnce = false;
+            ammoUseEffect = Fx.casing2;
+
+            consumeCoolant(2f).optional(true, true);
+
+            ammo(copper, new BasicBulletType(18f, 8){{
+                knockback = 0.1f;
+                lifetime = 120.0F;
+                limitRange();
+            }}, lead, new BasicBulletType(18f, 9){{
+                knockback = 0.15f;
+                lifetime = 120.0F;
+                limitRange();
+            }}, metaglass, new BasicBulletType(18f, 11){{
+                lifetime = 120.0F;
+                limitRange();
+
+                fragBullet = new BasicBulletType(18f, 9){{
+                    fragLifeMin = 8f;
+                    fragLifeMax = 20f;
+                    fragRandomSpread = 60f;
+                    fragBullets = 3;
+                    fragVelocityMin = 3.5f;
+                    fragVelocityMax = 7f;
+                }};
+            }}, polyethylene, new BasicBulletType(18f, 13){{
+                lifetime = 120.0F;
+                limitRange();
+
+                fragBullet = new BasicBulletType(18f, 10){{
+                    fragLifeMin = 8f;
+                    fragLifeMax = 20f;
+                    fragRandomSpread = 75f;
+                    fragBullets = 5;
+                    fragVelocityMin = 3.5f;
+                    fragVelocityMax = 7f;
+
+                    fragBullet = new BasicBulletType(18f, 7){{
+                        fragLifeMin = 8f;
+                        fragLifeMax = 20f;
+                        fragRandomSpread = 360f;
+                        fragBullets = 3;
+                        fragVelocityMin = 3.5f;
+                        fragVelocityMax = 7f;
+                    }};
+                }};
+            }}, titanium, new BasicBulletType(18f, 15){{
+                knockback = 0.2f;
+                lifetime = 120.0F;
+
+                pierce = true;
+                pierceCap = 4;
+                pierceBuilding = true;
+                pierceDamageFactor = 0.8f;
+                removeAfterPierce = false;
+
+                limitRange();
+            }}, thorium, new BasicBulletType(18f, 18){{
+                knockback = 0.22f;
+                lifetime = 120.0F;
+
+                pierce = true;
+                pierceCap = 6;
+                pierceBuilding = true;
+                pierceDamageFactor = 0.85f;
+                removeAfterPierce = false;
+
+                limitRange();
+            }}, surgeAlloy, new BasicBulletType(18f, 27){{
+                knockback = 0.3f;
+                lifetime = 120.0F;
+
+                pierce = true;
+                pierceCap = 10;
+                pierceBuilding = true;
+                pierceDamageFactor = 0.9f;
+                removeAfterPierce = false;
+
+                lightningColor = Pal.surge;
+                lightningLength = 20;
+                lightningDamage = 15f;
+                lightning = 3;
+
                 limitRange();
             }});
         }};
