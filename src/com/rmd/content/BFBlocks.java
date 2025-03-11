@@ -2,8 +2,9 @@ package com.rmd.content;
 
 import arc.graphics.Color;
 import com.rmd.content.blocks.EnvironmentalHeatCrafter;
-import com.rmd.content.blocks.EnvironmentalHeatProducer;
+import com.rmd.content.blocks.VoidDrill;
 import mindustry.content.Fx;
+import mindustry.content.Items;
 import mindustry.content.StatusEffects;
 import mindustry.entities.bullet.BasicBulletType;
 import mindustry.entities.effect.MultiEffect;
@@ -29,6 +30,8 @@ public class BFBlocks {
     public static Block fractionalDistillationTower, catalyticCracker, steamCracker,
             polyethylenePolymerizer, largePolyethylenePolymerizer, plastaniumInjector, largePlastaniumInjector,
             combustionHeater, powerHeater, environmentalHeater;
+
+    public static Block voidDrillMarkI;
 
     public static Block tripleGunMarkVII, HPJ11CIWS;
 
@@ -180,7 +183,7 @@ public class BFBlocks {
 
         powerHeater = new HeatProducer("power-heater") {{
             description = "It's worth it.";
-            requirements(Category.crafting, ItemStack.with(copper, 400, graphite, 150, silicon, 80, titanium, 80, polyethylene, 60));
+            requirements(Category.crafting, ItemStack.with(copper, 400, graphite, 150, silicon, 80, titanium, 80));
             researchCostMultiplier = 2.0f;
             rotateDraw = false;
             health = 900;
@@ -192,22 +195,23 @@ public class BFBlocks {
             consumePower(5f);
         }};
 
-        environmentalHeater = new EnvironmentalHeatProducer("environmental-heater"){{
-            description = "What?";
-            requirements(Category.crafting, ItemStack.with(copper, 400, graphite, 240, silicon, 660, titanium, 320, polyethylene, 300));
-            researchCostMultiplier = 4.0f;
-            rotateDraw = false;
-            health = 900;
-            size = 3;
-            heatOutput = 8.0F;
-            regionRotated1 = 1;
-            ambientSound = Sounds.hum;
-            itemCapacity = 0;
-            consumePower(16f);
-            range = 200f;
-        }};
+        // there is a bug
+//        environmentalHeater = new EnvironmentalHeatProducer("environmental-heater"){{
+//            description = "What?";
+//            requirements(Category.crafting, ItemStack.with(copper, 400, graphite, 240, silicon, 660, titanium, 320, polyethylene, 300));
+//            researchCostMultiplier = 4.0f;
+//            rotateDraw = false;
+//            health = 900;
+//            size = 3;
+//            heatOutput = 8.0F;
+//            regionRotated1 = 1;
+//            ambientSound = Sounds.hum;
+//            itemCapacity = 0;
+//            consumePower(16f);
+//            range = 200f;
+//        }};
 
-        tripleGunMarkVII = new ItemTurret("triple-gun-mark-VII"){{
+        tripleGunMarkVII = new ItemTurret("triple-gun-mk7"){{
             description = "It has been built as the core of maritime defense, providing powerful firepower support.";
             requirements(Category.turret, ItemStack.with(copper, 500, graphite, 650, silicon, 800, titanium, 1100, plastanium, 400, blastCompound, 400));
             researchCostMultiplier = 1.8f;
@@ -230,9 +234,9 @@ public class BFBlocks {
 
             consumeCoolant(2f).optional(true, true);
 
-            ammo(titanium, new BasicBulletType(12f, 880){{
+            ammo(titanium, new BasicBulletType(15f, 880){{
                 targetAir = false;
-                lifetime = 120.0F;
+                lifetime = 200.0F;
                 collidesAir = false;
                 splashDamageRadius = 224f;
                 splashDamage = 160f;
@@ -244,9 +248,9 @@ public class BFBlocks {
                 buildingDamageMultiplier = 1.5f;
                 hitShake = 4f;
                 hitEffect = Fx.blastExplosion;
-            }}, thorium, new BasicBulletType(12f, 960){{
+            }}, thorium, new BasicBulletType(15f, 960){{
                 targetAir = false;
-                lifetime = 120.0F;
+                lifetime = 200.0F;
                 collidesAir = false;
                 splashDamageRadius = 244f;
                 splashDamage = 200f;
@@ -258,9 +262,9 @@ public class BFBlocks {
                 buildingDamageMultiplier = 1.5f;
                 hitShake = 6f;
                 hitEffect = Fx.blastExplosion;
-            }}, pyratite, new BasicBulletType(12f, 75){{
+            }}, pyratite, new BasicBulletType(18f, 75){{
                 targetAir = false;
-                lifetime = 80.0F;
+                lifetime = 200.0F;
                 collidesAir = false;
                 splashDamageRadius = 376f;
                 splashDamage = 96f;
@@ -272,9 +276,11 @@ public class BFBlocks {
                 buildingDamageMultiplier = 1.2f;
                 hitShake = 2f;
                 status = StatusEffects.burning;
-            }}, blastCompound, new BasicBulletType(12f, 90){{
+                statusDuration = 3600f;
+                rangeChange = 40f;
+            }}, blastCompound, new BasicBulletType(22f, 90){{
                 targetAir = false;
-                lifetime = 80.0F;
+                lifetime = 200.0F;
                 collidesAir = false;
                 splashDamageRadius = 376f;
                 splashDamage = 600f;
@@ -285,6 +291,7 @@ public class BFBlocks {
                 trailWidth = 8f;
                 buildingDamageMultiplier = 2f;
                 hitShake = 9f;
+                rangeChange = 80f;
                 hitEffect = new MultiEffect(Fx.blastExplosion, Fx.fireHit);
             }});
 
@@ -297,9 +304,10 @@ public class BFBlocks {
             researchCostMultiplier = 1.8f;
             health = 880;
             size = 3;
-            reload = 0.06f;
+            reload = 0.6f;
+            shoot.shots = 10;
             rotateSpeed = 75f;
-            maxAmmo = 1000;
+            maxAmmo = 5000;
             inaccuracy = 30f;
             range = 140f;
             shootSound = Sounds.shoot;
@@ -382,6 +390,19 @@ public class BFBlocks {
             limitRange();
         }};
 
-
+        voidDrillMarkI = new VoidDrill("void-drill-mk1"){{
+            description = "A drill that drills through void.";
+            requirements(Category.production, ItemStack.with(Items.copper, 1000, Items.graphite, 800, Items.silicon, 800, Items.titanium, 1200));
+            researchCostMultiplier = 0.6f;
+            drillTime = 18f;
+            hardnessDrillMultiplier = 0f;
+            size = 3;
+            hasPower = true;
+            tier = 4;
+            updateEffect = Fx.pulverizeMedium;
+            drillEffect = Fx.mineBig;
+            consumePower(30F);
+            canOverdrive = false;
+        }};
     }
 }

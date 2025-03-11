@@ -1,18 +1,10 @@
 package com.rmd.content.blocks;
 
-import mindustry.world.meta.Stat;
-
 import java.util.concurrent.ConcurrentHashMap;
 
 public class EnvironmentalHeatCrafter extends LimitedHeatCrafter {
     public EnvironmentalHeatCrafter(String name) {
         super(name);
-        maxEfficiency = 1f;
-    }
-
-    public void setStats() {
-        super.setStats();
-        stats.remove(Stat.maxEfficiency);
     }
 
     public class EnvironmentalHeatCrafterBuild extends LimitedHeatCrafter.LimitedHeatCrafterBuild implements EnvironmentalHeatReceiver {

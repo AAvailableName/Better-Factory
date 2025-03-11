@@ -12,6 +12,7 @@ import mindustry.type.ItemStack;
 import static com.rmd.content.BFBlocks.*;
 import static mindustry.content.Blocks.*;
 import static mindustry.content.Items.blastCompound;
+import static mindustry.content.Items.titanium;
 import static mindustry.content.Liquids.oil;
 
 public final class BFTechTree {
@@ -38,7 +39,7 @@ public final class BFTechTree {
         margeNode(combustionGenerator, () -> {
             node(combustionHeater, () -> {
                 node(powerHeater, () -> {
-                    node(environmentalHeater);
+//                    node(environmentalHeater);
                 });
             });
         });
@@ -47,6 +48,10 @@ public final class BFTechTree {
             node(tripleGunMarkVII, Seq.with(new Objectives.SectorComplete(SectorPresets.impact0078), new Objectives.Produce(blastCompound)), () -> {
                 node(HPJ11CIWS, Seq.with(new Objectives.SectorComplete(SectorPresets.impact0078)));
             });
+        });
+
+        margeNode(laserDrill, () -> {
+            node(voidDrillMarkI, Seq.with(new Objectives.Produce(titanium)));
         });
     }
 
