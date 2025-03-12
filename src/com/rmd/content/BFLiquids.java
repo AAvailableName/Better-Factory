@@ -8,7 +8,7 @@ import static mindustry.content.Liquids.oil;
 import static mindustry.content.Liquids.water;
 
 public class BFLiquids {
-    public static Liquid naphtha, heavyOil, ethylene;
+    public static Liquid naphtha, heavyOil, ethylene, ethanol;
 
     public static void load() {
         naphtha = new Liquid("naphtha", Color.valueOf("d6c789")){{
@@ -48,6 +48,19 @@ public class BFLiquids {
             boilPoint = 0.9f;
             barColor = Color.valueOf("f2eeb9");
             gasColor = Color.valueOf("fcfbe2");
+            canStayOn.add(water);
+            canStayOn.add(oil);
+        }};
+
+        ethanol = new Liquid("ethanol", Color.valueOf("596ab8").a(0.5f)){{
+            heatCapacity = 1.0f;
+            viscosity = 0.4f;
+            explosiveness = 1.15f;
+            flammability = 1.4f;
+            temperature = 0.6f;
+            boilPoint = 0.8f;
+            barColor = Color.white.a(0.8f);
+            gasColor = Color.clear;
             canStayOn.add(water);
             canStayOn.add(oil);
         }};

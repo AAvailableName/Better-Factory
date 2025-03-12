@@ -10,9 +10,9 @@ import mindustry.game.Objectives.Objective;
 import mindustry.type.ItemStack;
 
 import static com.rmd.content.BFBlocks.*;
+import static com.rmd.content.BFLiquids.ethanol;
 import static mindustry.content.Blocks.*;
-import static mindustry.content.Items.blastCompound;
-import static mindustry.content.Items.titanium;
+import static mindustry.content.Items.*;
 import static mindustry.content.Liquids.oil;
 
 public final class BFTechTree {
@@ -32,6 +32,8 @@ public final class BFTechTree {
 
                         node(largePolyethylenePolymerizer);
                     });
+
+                    node(ethyleneHydrator);
                 });
             });
         });
@@ -39,19 +41,26 @@ public final class BFTechTree {
         margeNode(combustionGenerator, () -> {
             node(combustionHeater, () -> {
                 node(powerHeater, () -> {
-//                    node(environmentalHeater);
+                    node(environmentalHeater);
                 });
             });
+
+            node(ethanolPowerGenerator, Seq.with(new Objectives.Produce(ethanol)));
         });
 
         margeNode(duo, () -> {
-            node(tripleGunMarkVII, Seq.with(new Objectives.SectorComplete(SectorPresets.impact0078), new Objectives.Produce(blastCompound)), () -> {
-                node(HPJ11CIWS, Seq.with(new Objectives.SectorComplete(SectorPresets.impact0078)));
+            node(tripleGunMarkV, Seq.with(new Objectives.SectorComplete(SectorPresets.windsweptIslands), new Objectives.Produce(blastCompound)), () -> {
+                node(tripleGunMarkVII, Seq.with(new Objectives.SectorComplete(SectorPresets.impact0078), new Objectives.Produce(blastCompound)));
             });
+
+
+            node(HPJ11CIWS, Seq.with(new Objectives.SectorComplete(SectorPresets.impact0078)));
         });
 
         margeNode(laserDrill, () -> {
-            node(voidDrillMarkI, Seq.with(new Objectives.Produce(titanium)));
+            node(voidDrillMarkI, Seq.with(new Objectives.Produce(titanium)), () -> {
+                node(voidDrillMarkII, Seq.with(new Objectives.Produce(thorium), new Objectives.Produce(plastanium)));
+            });
         });
     }
 

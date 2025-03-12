@@ -4,21 +4,24 @@ import arc.graphics.Color;
 import arc.math.Mathf;
 import arc.struct.Seq;
 import arc.util.Tmp;
+import arc.util.io.Reads;
+import arc.util.io.Writes;
 import mindustry.Vars;
 import mindustry.graphics.Drawf;
-import mindustry.world.blocks.heat.HeatProducer;
+import mindustry.world.blocks.production.GenericCrafter;
 import mindustry.world.meta.Stat;
 import mindustry.world.meta.StatUnit;
 
-public class EnvironmentalHeatProducer extends HeatProducer {
+public class EnvironmentalHeatProducer extends GenericCrafter {
+    public float heatOutput = 10.0F;
+    public float warmupRate = 0.15F;
     public float range = 80f;
-    public Color baseColor;
-    public Color phaseColor;
+    public Color color;
 
     public EnvironmentalHeatProducer(String name) {
         super(name);
-        this.baseColor = Color.valueOf("feb380");
-        this.phaseColor = Color.valueOf("ffd59e");
+        color = Color.valueOf("feb380");
+        canOverdrive = false;
     }
 
     public void setStats() {
@@ -28,23 +31,20 @@ public class EnvironmentalHeatProducer extends HeatProducer {
 
     public void drawPlace(int x, int y, int rotation, boolean valid) {
         super.drawPlace(x, y, rotation, valid);
-        Drawf.dashCircle((float)(x * 8) + this.offset, (float)(y * 8) + this.offset, this.range, this.baseColor);
-        Vars.indexer.eachBlock(Vars.player.team(), (float)(x * 8) + this.offset, (float)(y * 8) + this.offset, this.range, (other) -> other instanceof EnvironmentalHeatReceiver, (other) -> {
-            Drawf.selected(other, Tmp.c1.set(this.baseColor).a(Mathf.absin(4.0F, 1.0F)));
+        Drawf.dashCircle((float)(x * 8) + offset, (float)(y * 8) + offset, range, color);
+        Vars.indexer.eachBlock(Vars.player.team(), (float)(x * 8) + offset, (float)(y * 8) + offset, range, (other) -> other instanceof EnvironmentalHeatReceiver, (other) -> {
+            Drawf.selected(other, Tmp.c1.set(color).a(Mathf.absin(4.0F, 1.0F)));
         });
     }
 
-    public class EnvironmentalHeatProducerBuild extends HeatProducerBuild {
-        @Override
-        public void update() {
-            super.update();
-
-            update = false;
-        }
+    public class EnvironmentalHeatProducerBuild extends GenericCrafterBuild {
+        public float heat;
 
         @Override
         public void updateTile() {
             super.updateTile();
+
+            this.heat = Mathf.approachDelta(this.heat, heatOutput * this.efficiency, warmupRate * this.delta());
 
             Seq<EnvironmentalHeatReceiver> receivers = new Seq<>();
 
@@ -58,12 +58,20 @@ public class EnvironmentalHeatProducer extends HeatProducer {
         }
 
         public void drawSelect() {
-            Vars.indexer.eachBlock(this, range, (other) -> {
-                return other instanceof EnvironmentalHeatReceiver;
-            }, (other) -> {
-                Drawf.selected(other, Tmp.c1.set(baseColor).a(Mathf.absin(4.0F, 1.0F)));
+            Vars.indexer.eachBlock(this, range, (other) -> other instanceof EnvironmentalHeatReceiver, (other) -> {
+                Drawf.selected(other, Tmp.c1.set(color).a(Mathf.absin(4.0F, 1.0F)));
             });
-            Drawf.dashCircle(this.x, this.y, range, baseColor);
+            Drawf.dashCircle(x, y, range, color);
+        }
+
+        public void write(Writes write) {
+            super.write(write);
+            write.f(this.heat);
+        }
+
+        public void read(Reads read, byte revision) {
+            super.read(read, revision);
+            this.heat = read.f();
         }
     }
 }

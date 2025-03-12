@@ -2,6 +2,7 @@ package com.rmd.content;
 
 import arc.graphics.Color;
 import com.rmd.content.blocks.EnvironmentalHeatCrafter;
+import com.rmd.content.blocks.EnvironmentalHeatProducer;
 import com.rmd.content.blocks.VoidDrill;
 import mindustry.content.Fx;
 import mindustry.content.Items;
@@ -16,6 +17,7 @@ import mindustry.type.LiquidStack;
 import mindustry.world.Block;
 import mindustry.world.blocks.defense.turrets.ItemTurret;
 import mindustry.world.blocks.heat.HeatProducer;
+import mindustry.world.blocks.power.PowerGenerator;
 import mindustry.world.blocks.production.GenericCrafter;
 import mindustry.world.consumers.ConsumeItemFlammable;
 
@@ -23,17 +25,19 @@ import static com.rmd.content.BFItems.oilResidue;
 import static com.rmd.content.BFItems.polyethylene;
 import static com.rmd.content.BFLiquids.*;
 import static mindustry.content.Items.*;
-import static mindustry.content.Liquids.cryofluid;
-import static mindustry.content.Liquids.oil;
+import static mindustry.content.Liquids.*;
 
 public class BFBlocks {
-    public static Block fractionalDistillationTower, catalyticCracker, steamCracker,
-            polyethylenePolymerizer, largePolyethylenePolymerizer, plastaniumInjector, largePlastaniumInjector,
-            combustionHeater, powerHeater, environmentalHeater;
+    public static Block fractionalDistillationTower, catalyticCracker, steamCracker, ethyleneHydrator,
+            polyethylenePolymerizer, largePolyethylenePolymerizer, plastaniumInjector, largePlastaniumInjector;
 
-    public static Block voidDrillMarkI;
+    public static Block combustionHeater, powerHeater, environmentalHeater;
 
-    public static Block tripleGunMarkVII, HPJ11CIWS;
+    public static Block voidDrillMarkI, voidDrillMarkII;
+
+    public static Block ethanolPowerGenerator;
+
+    public static Block tripleGunMarkV, tripleGunMarkVII, HPJ11CIWS;
 
     public static void load() {
         // oil -> naphtha + heavy oil + pyratite
@@ -52,7 +56,7 @@ public class BFBlocks {
             hasItems = true;
             outputLiquids = LiquidStack.with(naphtha, 1f, heavyOil, 0.5f);
             outputItem = new ItemStack(pyratite, 2);
-            consumePower(4f);
+            consumePower(2.8f);
             consumeLiquid(oil, 1f);
             consumeCoolant(0.4f).optional(true, true);
 
@@ -97,6 +101,23 @@ public class BFBlocks {
             consumeLiquids(LiquidStack.with(cryofluid, 0.3f, naphtha, 1f));
 
             heatRequirement = 15f;
+        }};
+
+        // ethylene -> ethanol
+        ethyleneHydrator = new EnvironmentalHeatCrafter("ethylene-hydrator"){{
+            description = "Making ethanol.";
+            requirements(Category.crafting, ItemStack.with(copper, 160, graphite, 120, silicon, 120, titanium, 600));
+            health = 780;
+            size = 3;
+            craftTime = 30f;
+            liquidCapacity = 120f;
+            craftEffect = Fx.steam;
+            ambientSound = Sounds.steam;
+            hasPower = true;
+            hasLiquids = true;
+            outputLiquid = new LiquidStack(ethanol, 1f);
+            consumePower(2.5f);
+            consumeLiquids(LiquidStack.with(water, 1f, ethylene, 1f));
         }};
 
         // ethylene -> polyethylene
@@ -195,21 +216,103 @@ public class BFBlocks {
             consumePower(5f);
         }};
 
-        // there is a bug
-//        environmentalHeater = new EnvironmentalHeatProducer("environmental-heater"){{
-//            description = "What?";
-//            requirements(Category.crafting, ItemStack.with(copper, 400, graphite, 240, silicon, 660, titanium, 320, polyethylene, 300));
-//            researchCostMultiplier = 4.0f;
-//            rotateDraw = false;
-//            health = 900;
-//            size = 3;
-//            heatOutput = 8.0F;
-//            regionRotated1 = 1;
-//            ambientSound = Sounds.hum;
-//            itemCapacity = 0;
-//            consumePower(16f);
-//            range = 200f;
-//        }};
+        environmentalHeater = new EnvironmentalHeatProducer("environmental-heater"){{
+            description = "What?";
+            requirements(Category.crafting, ItemStack.with(copper, 400, graphite, 240, silicon, 660, titanium, 320, polyethylene, 300));
+            researchCostMultiplier = 4.0f;
+            rotateDraw = false;
+            health = 900;
+            size = 3;
+            heatOutput = 8.0F;
+            ambientSound = Sounds.hum;
+            itemCapacity = 0;
+            consumePower(16f);
+            range = 200f;
+        }};
+
+        tripleGunMarkV = new ItemTurret("triple-gun-mk5"){{
+            description = "As an outdated weapon of the old era, it was replaced by the Mk6 due to insufficient firepower, and shortly thereafter, the Mk6 was in turn replaced by the Mk7 due to stability issues.";
+            requirements(Category.turret, ItemStack.with(copper, 800, graphite, 800, silicon, 600, titanium, 700, plastanium, 200, blastCompound, 300));
+            researchCostMultiplier = 1.1f;
+            health = 1540;
+            size = 4;
+            reload = 720f;
+            ammoPerShot = 10;
+            rotateSpeed = 6f;
+            maxAmmo = 200;
+            inaccuracy = 6f;
+            shoot.shotDelay = 3F;
+            shoot.shots = 3;
+            range = 573f;
+            shake = 2f;
+            shootSound = Sounds.shootBig;
+            recoil = 7f;
+            recoilTime = 45f;
+            consumeAmmoOnce = false;
+            ammoUseEffect = Fx.casing2;
+
+            consumeCoolant(2f).optional(true, true);
+            coolantMultiplier = 2f;
+
+            ammo(titanium, new BasicBulletType(13f, 300){{
+                targetAir = false;
+                lifetime = 400f;
+                collidesAir = false;
+                splashDamageRadius = 176f;
+                splashDamage = 64f;
+                drag = 0.005f;
+                trailColor = Color.yellow;
+                trailLength = 12;
+                trailWidth = 6f;
+                buildingDamageMultiplier = 1.2f;
+                hitShake = 3f;
+                hitEffect = Fx.blastExplosion;
+            }}, thorium, new BasicBulletType(13f, 360){{
+                targetAir = false;
+                lifetime = 400f;
+                collidesAir = false;
+                splashDamageRadius = 184f;
+                splashDamage = 75f;
+                drag = 0.005f;
+                trailColor = Color.yellow;
+                trailLength = 14;
+                trailWidth = 6f;
+                buildingDamageMultiplier = 1.2f;
+                hitShake = 4f;
+                hitEffect = Fx.blastExplosion;
+            }}, pyratite, new BasicBulletType(15f, 44){{
+                targetAir = false;
+                lifetime = 400f;
+                collidesAir = false;
+                splashDamageRadius = 256f;
+                splashDamage = 30f;
+                drag = 0.02f;
+                trailColor = Pal.lightOrange;
+                trailLength = 12;
+                trailWidth = 4f;
+                buildingDamageMultiplier = 1.2f;
+                hitShake = 2f;
+                status = StatusEffects.burning;
+                statusDuration = 3600f;
+                rangeChange = 40f;
+            }}, blastCompound, new BasicBulletType(18f, 60){{
+                targetAir = false;
+                lifetime = 400f;
+                collidesAir = false;
+                splashDamageRadius = 256f;
+                splashDamage = 350f;
+                drag = 0.015f;
+                trailColor = Color.red;
+                trailLength = 14;
+                trailWidth = 4f;
+                buildingDamageMultiplier = 2f;
+                hitShake = 6f;
+                rangeChange = 80f;
+                hitEffect = new MultiEffect(Fx.blastExplosion, Fx.fireHit);
+            }});
+
+            limitRange();
+        }};
 
         tripleGunMarkVII = new ItemTurret("triple-gun-mk7"){{
             description = "It has been built as the core of maritime defense, providing powerful firepower support.";
@@ -236,7 +339,7 @@ public class BFBlocks {
 
             ammo(titanium, new BasicBulletType(15f, 880){{
                 targetAir = false;
-                lifetime = 200.0F;
+                lifetime = 400f;
                 collidesAir = false;
                 splashDamageRadius = 224f;
                 splashDamage = 160f;
@@ -250,7 +353,7 @@ public class BFBlocks {
                 hitEffect = Fx.blastExplosion;
             }}, thorium, new BasicBulletType(15f, 960){{
                 targetAir = false;
-                lifetime = 200.0F;
+                lifetime = 400f;
                 collidesAir = false;
                 splashDamageRadius = 244f;
                 splashDamage = 200f;
@@ -264,7 +367,7 @@ public class BFBlocks {
                 hitEffect = Fx.blastExplosion;
             }}, pyratite, new BasicBulletType(18f, 75){{
                 targetAir = false;
-                lifetime = 200.0F;
+                lifetime = 400f;
                 collidesAir = false;
                 splashDamageRadius = 376f;
                 splashDamage = 96f;
@@ -280,7 +383,7 @@ public class BFBlocks {
                 rangeChange = 40f;
             }}, blastCompound, new BasicBulletType(22f, 90){{
                 targetAir = false;
-                lifetime = 200.0F;
+                lifetime = 400f;
                 collidesAir = false;
                 splashDamageRadius = 376f;
                 splashDamage = 600f;
@@ -403,6 +506,33 @@ public class BFBlocks {
             drillEffect = Fx.mineBig;
             consumePower(30F);
             canOverdrive = false;
+        }};
+
+        voidDrillMarkII = new VoidDrill("void-drill-mk2"){{
+            description = "A drill that drills through void with a faster speed.";
+            requirements(Category.production, ItemStack.with(Items.copper, 1800, Items.graphite, 1600, Items.silicon, 1600, Items.titanium, 2000, thorium, 800, plastanium, 800));
+            researchCostMultiplier = 0.6f;
+            drillTime = 9f;
+            hardnessDrillMultiplier = 0f;
+            size = 3;
+            hasPower = true;
+            tier = 5;
+            updateEffect = Fx.pulverizeMedium;
+            drillEffect = Fx.mineBig;
+            consumePower(80F);
+            canOverdrive = false;
+        }};
+
+        ethanolPowerGenerator = new PowerGenerator("ethanol-power-generator"){{
+            description = "Burn ethanol to get a lot of power.";
+            requirements(Category.power, ItemStack.with(copper, 350, lead, 300, graphite, 250, silicon, 250, titanium, 200));
+            health = 980;
+            size = 3;
+            powerProduction = 24.0F;
+            ambientSound = Sounds.smelter;
+            ambientSoundVolume = 0.08F;
+            consumeLiquid(ethanol, 1f);
+            hasLiquids = true;
         }};
     }
 }

@@ -15,7 +15,7 @@ public class VoidDrill extends Drill {
             if (block instanceof Floor f && (
                     !f.wallOre && f.itemDrop != null && f.itemDrop.hardness <= tier &&
                             f.itemDrop != blockedItem && (Vars.indexer.isBlockPresent(f) || Vars.state.isMenu()))) {
-                if (canMine(f.newBuilding().tile))itemArray.add(f.itemDrop);
+                if (canMine(f.newBuilding().tile)) itemArray.add(f.itemDrop);
             }
         });
     }
