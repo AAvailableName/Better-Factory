@@ -10,6 +10,7 @@ import mindustry.game.Objectives.Objective;
 import mindustry.type.ItemStack;
 
 import static com.rmd.content.BFBlocks.*;
+import static com.rmd.content.BFItems.voidParticle;
 import static com.rmd.content.BFLiquids.ethanol;
 import static mindustry.content.Blocks.*;
 import static mindustry.content.Items.*;
@@ -53,13 +54,17 @@ public final class BFTechTree {
                 node(tripleGunMarkVII, Seq.with(new Objectives.SectorComplete(SectorPresets.impact0078), new Objectives.Produce(blastCompound)));
             });
 
-
             node(HPJ11CIWS, Seq.with(new Objectives.SectorComplete(SectorPresets.impact0078)));
         });
 
         margeNode(laserDrill, () -> {
-            node(voidDrillMarkI, Seq.with(new Objectives.Produce(titanium)), () -> {
-                node(voidDrillMarkII, Seq.with(new Objectives.Produce(thorium), new Objectives.Produce(plastanium)));
+            node(voidDrillMarkI, Seq.with(new Objectives.Produce(titanium), new Objectives.Produce(thorium),
+                    new Objectives.Produce(plastanium), new Objectives.Produce(phaseFabric)), () -> {
+                node(voidDrillMarkII, () -> {
+                    node(voidDrillMarkIII, Seq.with(new Objectives.Produce(surgeAlloy)), () -> {
+                        node(voidDrillMarkIV, Seq.with(new Objectives.Produce(voidParticle)));
+                    });
+                });
             });
         });
     }

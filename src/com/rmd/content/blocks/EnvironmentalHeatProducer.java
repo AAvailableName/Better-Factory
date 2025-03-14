@@ -27,6 +27,7 @@ public class EnvironmentalHeatProducer extends GenericCrafter {
     public void setStats() {
         super.setStats();
         stats.add(Stat.range, range / 8.0F, StatUnit.blocks);
+        stats.add(Stat.output, heatOutput, StatUnit.heatUnits);
     }
 
     public void drawPlace(int x, int y, int rotation, boolean valid) {

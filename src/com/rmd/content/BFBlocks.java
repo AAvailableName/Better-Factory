@@ -3,9 +3,9 @@ package com.rmd.content;
 import arc.graphics.Color;
 import com.rmd.content.blocks.EnvironmentalHeatCrafter;
 import com.rmd.content.blocks.EnvironmentalHeatProducer;
+import com.rmd.content.blocks.OutputGenerator;
 import com.rmd.content.blocks.VoidDrill;
 import mindustry.content.Fx;
-import mindustry.content.Items;
 import mindustry.content.StatusEffects;
 import mindustry.entities.bullet.BasicBulletType;
 import mindustry.entities.effect.MultiEffect;
@@ -17,12 +17,11 @@ import mindustry.type.LiquidStack;
 import mindustry.world.Block;
 import mindustry.world.blocks.defense.turrets.ItemTurret;
 import mindustry.world.blocks.heat.HeatProducer;
-import mindustry.world.blocks.power.PowerGenerator;
+import mindustry.world.blocks.power.ConsumeGenerator;
 import mindustry.world.blocks.production.GenericCrafter;
 import mindustry.world.consumers.ConsumeItemFlammable;
 
-import static com.rmd.content.BFItems.oilResidue;
-import static com.rmd.content.BFItems.polyethylene;
+import static com.rmd.content.BFItems.*;
 import static com.rmd.content.BFLiquids.*;
 import static mindustry.content.Items.*;
 import static mindustry.content.Liquids.*;
@@ -33,9 +32,9 @@ public class BFBlocks {
 
     public static Block combustionHeater, powerHeater, environmentalHeater;
 
-    public static Block voidDrillMarkI, voidDrillMarkII;
+    public static Block voidDrillMarkI, voidDrillMarkII, voidDrillMarkIII, voidDrillMarkIV;
 
-    public static Block ethanolPowerGenerator;
+    public static Block ethanolPowerGenerator, voidPowerGenerator;
 
     public static Block tripleGunMarkV, tripleGunMarkVII, HPJ11CIWS;
 
@@ -233,7 +232,7 @@ public class BFBlocks {
         tripleGunMarkV = new ItemTurret("triple-gun-mk5"){{
             description = "As an outdated weapon of the old era, it was replaced by the Mk6 due to insufficient firepower, and shortly thereafter, the Mk6 was in turn replaced by the Mk7 due to stability issues.";
             requirements(Category.turret, ItemStack.with(copper, 800, graphite, 800, silicon, 600, titanium, 700, plastanium, 200, blastCompound, 300));
-            researchCostMultiplier = 1.1f;
+            researchCostMultiplier = 0.75f;
             health = 1540;
             size = 4;
             reload = 720f;
@@ -260,7 +259,6 @@ public class BFBlocks {
                 collidesAir = false;
                 splashDamageRadius = 176f;
                 splashDamage = 64f;
-                drag = 0.005f;
                 trailColor = Color.yellow;
                 trailLength = 12;
                 trailWidth = 6f;
@@ -273,7 +271,6 @@ public class BFBlocks {
                 collidesAir = false;
                 splashDamageRadius = 184f;
                 splashDamage = 75f;
-                drag = 0.005f;
                 trailColor = Color.yellow;
                 trailLength = 14;
                 trailWidth = 6f;
@@ -286,7 +283,6 @@ public class BFBlocks {
                 collidesAir = false;
                 splashDamageRadius = 256f;
                 splashDamage = 30f;
-                drag = 0.02f;
                 trailColor = Pal.lightOrange;
                 trailLength = 12;
                 trailWidth = 4f;
@@ -301,7 +297,6 @@ public class BFBlocks {
                 collidesAir = false;
                 splashDamageRadius = 256f;
                 splashDamage = 350f;
-                drag = 0.015f;
                 trailColor = Color.red;
                 trailLength = 14;
                 trailWidth = 4f;
@@ -344,7 +339,6 @@ public class BFBlocks {
                 splashDamageRadius = 224f;
                 splashDamage = 160f;
                 reflectable = false;
-                drag = 0.005f;
                 trailColor = Color.yellow;
                 trailLength = 20;
                 trailWidth = 8f;
@@ -358,7 +352,6 @@ public class BFBlocks {
                 splashDamageRadius = 244f;
                 splashDamage = 200f;
                 reflectable = false;
-                drag = 0.002f;
                 trailColor = Color.yellow;
                 trailLength = 22;
                 trailWidth = 8f;
@@ -372,7 +365,6 @@ public class BFBlocks {
                 splashDamageRadius = 376f;
                 splashDamage = 96f;
                 reflectable = false;
-                drag = 0.02f;
                 trailColor = Pal.lightOrange;
                 trailLength = 18;
                 trailWidth = 8f;
@@ -388,7 +380,6 @@ public class BFBlocks {
                 splashDamageRadius = 376f;
                 splashDamage = 600f;
                 reflectable = false;
-                drag = 0.015f;
                 trailColor = Color.red;
                 trailLength = 18;
                 trailWidth = 8f;
@@ -409,7 +400,7 @@ public class BFBlocks {
             size = 3;
             reload = 0.6f;
             shoot.shots = 10;
-            rotateSpeed = 75f;
+            rotateSpeed = 90f;
             maxAmmo = 5000;
             inaccuracy = 30f;
             range = 140f;
@@ -495,44 +486,84 @@ public class BFBlocks {
 
         voidDrillMarkI = new VoidDrill("void-drill-mk1"){{
             description = "A drill that drills through void.";
-            requirements(Category.production, ItemStack.with(Items.copper, 1000, Items.graphite, 800, Items.silicon, 800, Items.titanium, 1200));
+            requirements(Category.production, ItemStack.with(copper, 1000, graphite, 800, silicon, 800, titanium, 1200, plastanium, 800,
+                    thorium, 800, phaseFabric, 800));
             researchCostMultiplier = 0.6f;
             drillTime = 18f;
-            hardnessDrillMultiplier = 0f;
             size = 3;
-            hasPower = true;
             tier = 4;
-            updateEffect = Fx.pulverizeMedium;
-            drillEffect = Fx.mineBig;
+            itemCapacity = 80;
             consumePower(30F);
-            canOverdrive = false;
         }};
 
         voidDrillMarkII = new VoidDrill("void-drill-mk2"){{
             description = "A drill that drills through void with a faster speed.";
-            requirements(Category.production, ItemStack.with(Items.copper, 1800, Items.graphite, 1600, Items.silicon, 1600, Items.titanium, 2000, thorium, 800, plastanium, 800));
+            requirements(Category.production, ItemStack.with(copper, 1800, graphite, 1600, silicon, 1600, titanium, 2000, plastanium, 1200,
+                    thorium, 1200, phaseFabric, 1200));
             researchCostMultiplier = 0.6f;
             drillTime = 9f;
-            hardnessDrillMultiplier = 0f;
             size = 3;
-            hasPower = true;
             tier = 5;
-            updateEffect = Fx.pulverizeMedium;
-            drillEffect = Fx.mineBig;
+            itemCapacity = 200;
+            lowestDrillTier = 1f;
             consumePower(80F);
-            canOverdrive = false;
         }};
 
-        ethanolPowerGenerator = new PowerGenerator("ethanol-power-generator"){{
+        voidDrillMarkIII = new VoidDrill("void-drill-mk3"){{
+            description = "This will never be the most effective one.";
+            requirements(Category.production, ItemStack.with(copper, 2500, graphite, 2000, silicon, 2000, titanium, 3000, plastanium, 2000,
+                    thorium, 2000, phaseFabric, 1600, surgeAlloy, 800));
+            researchCostMultiplier = 0.6f;
+            drillTime = 4f;
+            size = 3;
+            tier = 6;
+            itemCapacity = 300;
+            lowestDrillTier = 2f;
+            consumePower(180F);
+        }};
+
+        voidDrillMarkIV = new VoidDrill("void-drill-mk4"){{
+            description = "Faster, faster and faster.";
+            requirements(Category.production, ItemStack.with(copper, 3000, graphite, 3000, silicon, 3000, titanium, 4000, plastanium, 3000,
+                    thorium, 3000, phaseFabric, 2500, surgeAlloy, 1500, voidParticle, 200));
+            researchCostMultiplier = 0.6f;
+            drillTime = 2f;
+            size = 4;
+            tier = 7;
+            itemCapacity = 400;
+            lowestDrillTier = 3f;
+            consumePower(300F);
+        }};
+
+        ethanolPowerGenerator = new ConsumeGenerator("ethanol-power-generator"){{
             description = "Burn ethanol to get a lot of power.";
             requirements(Category.power, ItemStack.with(copper, 350, lead, 300, graphite, 250, silicon, 250, titanium, 200));
             health = 980;
             size = 3;
+            liquidCapacity = 120.0F;
             powerProduction = 24.0F;
+            generateEffect = Fx.burning;
             ambientSound = Sounds.smelter;
             ambientSoundVolume = 0.08F;
             consumeLiquid(ethanol, 1f);
-            hasLiquids = true;
+        }};
+
+        voidPowerGenerator = new OutputGenerator("void-power-generator"){{
+            description = "Using void particles to generate power and a few dark matter.";
+            requirements(Category.power, ItemStack.with(copper, 500, silicon, 300, titanium, 250, thorium, 200, plastanium, 200, voidParticle, 50));
+            health = 2880;
+            size = 4;
+            itemCapacity = 20;
+            itemDuration = 60f;
+            powerProduction = 40.0F;
+            generateEffect = Fx.bigShockwave;
+            generateEffectRange = 16;
+            ambientSound = Sounds.shockBlast;
+            ambientSoundVolume = 0.16F;
+            consumeItem(voidParticle, 1);
+            outputItem = new ItemStack(darkMatter, 1);
+            explosionRadius = 38;
+            explosionDamage = 7000;
         }};
     }
 }
