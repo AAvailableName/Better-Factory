@@ -1,22 +1,27 @@
 package com.rmd.content.blocks;
 
 import arc.math.Mathf;
+import com.rmd.content.BFStatValues;
 import mindustry.Vars;
 import mindustry.content.Fx;
 import mindustry.game.Team;
+import mindustry.type.ItemStack;
 import mindustry.world.Tile;
 import mindustry.world.blocks.environment.Floor;
 import mindustry.world.blocks.production.Drill;
+import mindustry.world.meta.Stat;
+import mindustry.world.meta.StatValues;
 
 import static com.rmd.content.BFItems.voidParticle;
 
 public class VoidDrill extends Drill {
     public float lowestDrillTier = 0f;
-    public float voidParticleChance = 0.0005f; // 1/2000
+    public float voidParticleChance = 0f;
 
     public VoidDrill(String name) {
         super(name);
         hasPower = true;
+	    hasLiquids = false;
         liquidCapacity = 0;
         updateEffect = Fx.pulverizeMedium;
         drillEffect = Fx.mineBig;
@@ -29,12 +34,29 @@ public class VoidDrill extends Drill {
         super.init();
 
         Vars.content.blocks().forEach(block -> {
-            if (block instanceof Floor f && (
-                    !f.wallOre && f.itemDrop != null && f.itemDrop.hardness <= tier && f.itemDrop.hardness >= lowestDrillTier &&
-                            f.itemDrop != blockedItem)) {
+            if (block instanceof Floor f && enableMine(f)) {
                 itemArray.add(f.itemDrop);
             }
         });
+    }
+
+    @Override
+    public void setStats() {
+        super.setStats();
+        stats.remove(Stat.drillTier);
+        stats.add(Stat.drillTier, StatValues.drillables(this.drillTime, this.hardnessDrillMultiplier, (float)(this.size * this.size), this.drillMultipliers, (b) -> {
+            if (b instanceof Floor f) {
+                return enableMine(f);
+            }
+
+            return false;
+        }));
+
+        if (voidParticleChance > 0f) stats.add(Stat.output, BFStatValues.itemChance(voidParticleChance, new ItemStack(voidParticle, 1)));
+    }
+
+    public boolean enableMine(Floor floor){
+        return !floor.wallOre && floor.itemDrop != null && floor.itemDrop.hardness <= tier && floor.itemDrop.hardness >= lowestDrillTier && floor.itemDrop != blockedItem;
     }
 
     @Override
@@ -57,7 +79,7 @@ public class VoidDrill extends Drill {
     public class VoidDrillBuild extends DrillBuild {
         @Override
         public void updateTile() {
-            if (timer(timerDump, 5.0F)) {
+            if (timer(timerDump, 1.0F)) {
                 if (tier >= 6 && Mathf.chance(voidParticleChance * warmup)) {
                     items.add(voidParticle, 1);
                 }
@@ -65,6 +87,8 @@ public class VoidDrill extends Drill {
                 dump(dominantItem != null && items.has(dominantItem) ? dominantItem : null);
                 onProximityUpdate();
             }
+
+
 
             if (dominantItem != null) {
                 timeDrilled += warmup * delta();

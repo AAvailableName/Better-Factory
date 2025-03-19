@@ -1,9 +1,6 @@
 package com.rmd;
 
-import com.rmd.content.BFBlocks;
-import com.rmd.content.BFItems;
-import com.rmd.content.BFLiquids;
-import com.rmd.content.BFTechTree;
+import com.rmd.content.*;
 import mindustry.mod.Mod;
 
 public class Main extends Mod{
@@ -13,6 +10,8 @@ public class Main extends Mod{
         BFLiquids.load();
 
         BFBlocks.load();
+        BFSectors.load();
+
         BFTechTree.load();
     }
 }

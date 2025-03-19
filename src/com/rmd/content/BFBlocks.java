@@ -7,7 +7,10 @@ import com.rmd.content.blocks.OutputGenerator;
 import com.rmd.content.blocks.VoidDrill;
 import mindustry.content.Fx;
 import mindustry.content.StatusEffects;
+import mindustry.entities.UnitSorts;
 import mindustry.entities.bullet.BasicBulletType;
+import mindustry.entities.bullet.BulletType;
+import mindustry.entities.bullet.PointBulletType;
 import mindustry.entities.effect.MultiEffect;
 import mindustry.gen.Sounds;
 import mindustry.graphics.Pal;
@@ -16,6 +19,7 @@ import mindustry.type.ItemStack;
 import mindustry.type.LiquidStack;
 import mindustry.world.Block;
 import mindustry.world.blocks.defense.turrets.ItemTurret;
+import mindustry.world.blocks.defense.turrets.PowerTurret;
 import mindustry.world.blocks.heat.HeatProducer;
 import mindustry.world.blocks.power.ConsumeGenerator;
 import mindustry.world.blocks.production.GenericCrafter;
@@ -36,7 +40,8 @@ public class BFBlocks {
 
     public static Block ethanolPowerGenerator, voidPowerGenerator;
 
-    public static Block tripleGunMarkV, tripleGunMarkVII, HPJ11CIWS;
+    public static Block doubleGunMarkIV, doubleGunMarkVIII, simpleLightJavelinLauncher, lightJavelinLauncher
+            , tripleGunMarkV, tripleGunMarkVII, LPJ11CIWS, LMR3MRADS, destroyer;
 
     public static void load() {
         // oil -> naphtha + heavy oil + pyratite
@@ -229,17 +234,147 @@ public class BFBlocks {
             range = 200f;
         }};
 
+        doubleGunMarkIV = new ItemTurret("double-gun-mk4"){{
+            description = "The twin-mounted anti-aircraft gun is capable of engaging both air and ground targets, and it is cost-effective!";
+            requirements(Category.turret, ItemStack.with(copper, 300, graphite, 300, silicon, 200, titanium, 180));
+            researchCostMultiplier = 0.5f;
+            health = 960;
+            size = 3;
+            reload = 24f;
+            ammoPerShot = 5;
+            rotateSpeed = 12f;
+            maxAmmo = 100;
+            inaccuracy = 4f;
+            shoot.shotDelay = 3F;
+            shoot.shots = 2;
+            range = 514f;
+            shake = 2f;
+            shootSound = Sounds.shoot;
+            recoil = 3f;
+            recoilTime = 15f;
+            consumeAmmoOnce = false;
+            ammoUseEffect = Fx.casing2;
+
+            coolant = consumeCoolant(1f);
+            coolantMultiplier = 2f;
+
+            ammo(titanium, new BasicBulletType(8f, 182){{
+                lifetime = 400f;
+                splashDamageRadius = 48f;
+                splashDamage = 19f;
+                trailColor = Color.yellow;
+                trailLength = 7;
+                trailWidth = 4f;
+                hitEffect = Fx.blastExplosion;
+            }}, thorium, new BasicBulletType(8f, 244){{
+                lifetime = 400f;
+                splashDamageRadius = 64f;
+                splashDamage = 32f;
+                trailColor = Color.yellow;
+                trailLength = 9;
+                trailWidth = 5f;
+                hitEffect = Fx.blastExplosion;
+            }}, pyratite, new BasicBulletType(8f, 18){{
+                lifetime = 400f;
+                splashDamageRadius = 64f;
+                splashDamage = 32f;
+                trailColor = Pal.lightOrange;
+                trailLength = 7;
+                trailWidth = 4f;
+                status = StatusEffects.burning;
+                statusDuration = 3600f;
+            }}, blastCompound, new BasicBulletType(18f, 20){{
+                lifetime = 400f;
+                splashDamagePierce = true;
+                splashDamageRadius = 174f;
+                splashDamage = 270f;
+                trailColor = Color.red;
+                trailLength = 9;
+                trailWidth = 4f;
+                hitShake = 4f;
+                hitEffect = new MultiEffect(Fx.blastExplosion, Fx.fireHit);
+                status = StatusEffects.blasted;
+            }});
+
+            limitRange();
+        }};
+
+        doubleGunMarkVIII = new ItemTurret("double-gun-mk8"){{
+            description = "The twin-mounted anti-aircraft gun is capable of engaging both air and ground targets!";
+            requirements(Category.turret, ItemStack.with(copper, 600, metaglass, 200, graphite, 600, silicon, 800, titanium, 1000));
+            researchCostMultiplier = 0.7f;
+            health = 1080;
+            size = 3;
+            reload = 9f;
+            ammoPerShot = 5;
+            rotateSpeed = 20f;
+            maxAmmo = 240;
+            inaccuracy = 2.2f;
+            shoot.shotDelay = 3F;
+            shoot.shots = 2;
+            range = 514f;
+            shake = 2f;
+            shootSound = Sounds.shoot;
+            recoil = 3f;
+            recoilTime = 15f;
+            consumeAmmoOnce = false;
+            ammoUseEffect = Fx.casing2;
+
+            coolant = consumeCoolant(2f);
+            coolantMultiplier = 2f;
+
+            ammo(titanium, new BasicBulletType(8f, 182){{
+                lifetime = 400f;
+                splashDamageRadius = 48f;
+                splashDamage = 19f;
+                trailColor = Color.yellow;
+                trailLength = 7;
+                trailWidth = 4f;
+                hitEffect = Fx.blastExplosion;
+            }}, thorium, new BasicBulletType(8f, 244){{
+                lifetime = 400f;
+                splashDamageRadius = 64f;
+                splashDamage = 32f;
+                trailColor = Color.yellow;
+                trailLength = 9;
+                trailWidth = 5f;
+                hitEffect = Fx.blastExplosion;
+            }}, pyratite, new BasicBulletType(8f, 18){{
+                lifetime = 400f;
+                splashDamageRadius = 64f;
+                splashDamage = 32f;
+                trailColor = Pal.lightOrange;
+                trailLength = 7;
+                trailWidth = 4f;
+                status = StatusEffects.burning;
+                statusDuration = 3600f;
+            }}, blastCompound, new BasicBulletType(18f, 20){{
+                lifetime = 400f;
+                splashDamagePierce = true;
+                splashDamageRadius = 174f;
+                splashDamage = 270f;
+                trailColor = Color.red;
+                trailLength = 9;
+                trailWidth = 4f;
+                hitShake = 4f;
+                hitEffect = new MultiEffect(Fx.blastExplosion, Fx.fireHit);
+                status = StatusEffects.blasted;
+            }});
+
+            limitRange();
+        }};
+
         tripleGunMarkV = new ItemTurret("triple-gun-mk5"){{
             description = "As an outdated weapon of the old era, it was replaced by the Mk6 due to insufficient firepower, and shortly thereafter, the Mk6 was in turn replaced by the Mk7 due to stability issues.";
-            requirements(Category.turret, ItemStack.with(copper, 800, graphite, 800, silicon, 600, titanium, 700, plastanium, 200, blastCompound, 300));
-            researchCostMultiplier = 0.75f;
+            requirements(Category.turret, ItemStack.with(copper, 800, graphite, 800, silicon, 600, titanium, 650, plastanium, 200));
+            researchCostMultiplier = 1.4f;
             health = 1540;
             size = 4;
-            reload = 720f;
+            reload = 480f;
             ammoPerShot = 10;
             rotateSpeed = 6f;
             maxAmmo = 200;
-            inaccuracy = 6f;
+            inaccuracy = 8f;
             shoot.shotDelay = 3F;
             shoot.shots = 3;
             range = 573f;
@@ -250,7 +385,7 @@ public class BFBlocks {
             consumeAmmoOnce = false;
             ammoUseEffect = Fx.casing2;
 
-            consumeCoolant(2f).optional(true, true);
+            coolant = consumeCoolant(2f);
             coolantMultiplier = 2f;
 
             ammo(titanium, new BasicBulletType(13f, 300){{
@@ -304,6 +439,7 @@ public class BFBlocks {
                 hitShake = 6f;
                 rangeChange = 80f;
                 hitEffect = new MultiEffect(Fx.blastExplosion, Fx.fireHit);
+                status = StatusEffects.blasted;
             }});
 
             limitRange();
@@ -311,15 +447,15 @@ public class BFBlocks {
 
         tripleGunMarkVII = new ItemTurret("triple-gun-mk7"){{
             description = "It has been built as the core of maritime defense, providing powerful firepower support.";
-            requirements(Category.turret, ItemStack.with(copper, 500, graphite, 650, silicon, 800, titanium, 1100, plastanium, 400, blastCompound, 400));
-            researchCostMultiplier = 1.8f;
+            requirements(Category.turret, ItemStack.with(copper, 600, metaglass, 300, graphite, 750, silicon, 900, titanium, 1400, plastanium, 600));
+            researchCostMultiplier = 2.1f;
             health = 1980;
             size = 5;
-            reload = 3000f;
+            reload = 1500f;
             ammoPerShot = 50;
             rotateSpeed = 3f;
             maxAmmo = 300;
-            inaccuracy = 4f;
+            inaccuracy = 6f;
             shoot.shotDelay = 3F;
             shoot.shots = 3;
             range = 840f;
@@ -330,12 +466,14 @@ public class BFBlocks {
             consumeAmmoOnce = false;
             ammoUseEffect = Fx.casing2;
 
-            consumeCoolant(2f).optional(true, true);
+
+            coolant = consumeCoolant(2f);
 
             ammo(titanium, new BasicBulletType(15f, 880){{
                 targetAir = false;
                 lifetime = 400f;
                 collidesAir = false;
+                splashDamagePierce = true;
                 splashDamageRadius = 224f;
                 splashDamage = 160f;
                 reflectable = false;
@@ -349,6 +487,7 @@ public class BFBlocks {
                 targetAir = false;
                 lifetime = 400f;
                 collidesAir = false;
+                splashDamagePierce = true;
                 splashDamageRadius = 244f;
                 splashDamage = 200f;
                 reflectable = false;
@@ -362,12 +501,13 @@ public class BFBlocks {
                 targetAir = false;
                 lifetime = 400f;
                 collidesAir = false;
+                splashDamagePierce = true;
                 splashDamageRadius = 376f;
                 splashDamage = 96f;
                 reflectable = false;
                 trailColor = Pal.lightOrange;
                 trailLength = 18;
-                trailWidth = 8f;
+                trailWidth = 6f;
                 buildingDamageMultiplier = 1.2f;
                 hitShake = 2f;
                 status = StatusEffects.burning;
@@ -377,22 +517,58 @@ public class BFBlocks {
                 targetAir = false;
                 lifetime = 400f;
                 collidesAir = false;
+                splashDamagePierce = true;
                 splashDamageRadius = 376f;
                 splashDamage = 600f;
                 reflectable = false;
                 trailColor = Color.red;
                 trailLength = 18;
-                trailWidth = 8f;
+                trailWidth = 6f;
                 buildingDamageMultiplier = 2f;
                 hitShake = 9f;
                 rangeChange = 80f;
                 hitEffect = new MultiEffect(Fx.blastExplosion, Fx.fireHit);
+                status = StatusEffects.blasted;
             }});
 
             limitRange();
         }};
 
-        HPJ11CIWS = new ItemTurret("HPJ-11-CIWS"){{
+        destroyer = new ItemTurret("destroyer"){{
+            description = "Good luck.";
+            requirements(Category.turret, ItemStack.with(voidParticle, 500, darkMatter, 200));
+            researchCost = ItemStack.with(voidParticle, 600, darkMatter, 320);
+            health = 9999;
+            size = 6;
+            reload = 6000f;
+            ammoPerShot = 1;
+            rotateSpeed = 3f;
+            maxAmmo = 20;
+            range = 880f;
+            shake = 9.9f;
+            recoil = 100f;
+            recoilTime = 600f;
+            ammoUseEffect = Fx.casing3;
+            shootSound = Sounds.railgun;
+            unitSort = UnitSorts.strongest;
+            consumePower(99f);
+
+            ammo(voidParticle, new PointBulletType(){{
+                shootEffect = Fx.instShoot;
+                hitEffect = Fx.instHit;
+                smokeEffect = Fx.smokeCloud;
+                trailEffect = Fx.instTrail;
+                despawnEffect = Fx.instBomb;
+                trailSpacing = 20.0F;
+                splashDamageRadius = 99.9F;
+                splashDamage = 99999.9F;
+                speed = range;
+                hitShake = 9.9F;
+                ammoMultiplier = 1.0F;
+            }});
+        }};
+
+        LPJ11CIWS = new ItemTurret("LPJ-11-CIWS"){{
             description = "It's crazy, can the logistics hold up?";
             requirements(Category.turret, ItemStack.with(copper, 500, graphite, 600, silicon, 500, titanium, 700, plastanium, 300));
             researchCostMultiplier = 1.8f;
@@ -400,6 +576,7 @@ public class BFBlocks {
             size = 3;
             reload = 0.6f;
             shoot.shots = 10;
+            shoot.shotDelay = 0.06f;
             rotateSpeed = 90f;
             maxAmmo = 5000;
             inaccuracy = 30f;
@@ -407,8 +584,6 @@ public class BFBlocks {
             shootSound = Sounds.shoot;
             consumeAmmoOnce = false;
             ammoUseEffect = Fx.casing2;
-
-            consumeCoolant(2f).optional(true, true);
 
             ammo(copper, new BasicBulletType(18f, 8){{
                 knockback = 0.1f;
@@ -479,9 +654,200 @@ public class BFBlocks {
                 lightningLength = 20;
                 lightningDamage = 15f;
                 lightning = 3;
+            }}, blastCompound, new BasicBulletType(18f, 5){{
+                lifetime = 120.0F;
+                splashDamageRadius = 38.4f;
+                splashDamage = 20f;
+                trailColor = Color.red;
+                trailLength = 4;
+                trailWidth = 1.5f;
+                hitShake = 0.9f;
+                hitEffect = new MultiEffect(Fx.blastExplosion, Fx.fireHit);
+                status = StatusEffects.blasted;
             }});
 
             limitRange();
+        }};
+
+        LMR3MRADS = new ItemTurret("LMR-3-MRADS"){{
+            description = "Previously a commonly used anti-aircraft firepower, it boasted relatively superior range and high accuracy, while its lower logistical demands made it widely deployed in combat against MRKW.";
+            requirements(Category.turret, ItemStack.with(copper, 350, graphite, 400, silicon, 550, titanium, 600, plastanium, 100));
+            researchCostMultiplier = 1.2f;
+            health = 720;
+            size = 3;
+            reload = 1.2f;
+            shoot.shots = 2;
+            shoot.shotDelay = 0.6f;
+            rotateSpeed = 85f;
+            maxAmmo = 2000;
+            inaccuracy = 14f;
+            range = 288f;
+            shootSound = Sounds.shoot;
+            consumeAmmoOnce = false;
+            ammoUseEffect = Fx.casing2;
+            ammoPerShot = 2;
+
+            coolant = consumeCoolant(2f);
+
+            ammo(copper, new BasicBulletType(18f, 10){{
+                knockback = 0.1f;
+                lifetime = 120.0F;
+            }}, lead, new BasicBulletType(18f, 13){{
+                knockback = 0.15f;
+                lifetime = 120.0F;
+            }}, metaglass, new BasicBulletType(18f, 17){{
+                lifetime = 120.0F;
+
+                fragBullet = new BasicBulletType(18f, 11){{
+                    fragLifeMin = 20f;
+                    fragLifeMax = 32f;
+                    fragRandomSpread = 18f;
+                    fragBullets = 4;
+                    fragVelocityMin = 3.5f;
+                    fragVelocityMax = 7f;
+                }};
+            }}, polyethylene, new BasicBulletType(18f, 21){{
+                lifetime = 120.0F;
+
+                fragBullet = new BasicBulletType(18f, 16){{
+                    fragLifeMin = 20f;
+                    fragLifeMax = 36f;
+                    fragRandomSpread = 22f;
+                    fragBullets = 7;
+                    fragVelocityMin = 3.5f;
+                    fragVelocityMax = 7f;
+
+                    fragBullet = new BasicBulletType(18f, 11){{
+                        fragLifeMin = 8f;
+                        fragLifeMax = 20f;
+                        fragRandomSpread = 360f;
+                        fragBullets = 4;
+                        fragVelocityMin = 3.5f;
+                        fragVelocityMax = 7f;
+                    }};
+                }};
+            }}, titanium, new BasicBulletType(18f, 30){{
+                knockback = 0.2f;
+                lifetime = 120.0F;
+
+                pierce = true;
+                pierceCap = 4;
+                pierceBuilding = true;
+                pierceDamageFactor = 0.8f;
+                removeAfterPierce = false;
+            }}, thorium, new BasicBulletType(18f, 35){{
+                knockback = 0.22f;
+                lifetime = 120.0F;
+
+                pierce = true;
+                pierceCap = 6;
+                pierceBuilding = true;
+                pierceDamageFactor = 0.85f;
+                removeAfterPierce = false;
+            }}, surgeAlloy, new BasicBulletType(18f, 88){{
+                knockback = 0.3f;
+                lifetime = 120.0F;
+
+                pierce = true;
+                pierceCap = 10;
+                pierceBuilding = true;
+                pierceDamageFactor = 0.9f;
+                removeAfterPierce = false;
+
+                lightningColor = Pal.surge;
+                lightningLength = 20;
+                lightningDamage = 18f;
+                lightning = 7;
+                ammoMultiplier = 1f;
+            }}, blastCompound, new BasicBulletType(18f, 6){{
+                lifetime = 120.0F;
+                splashDamageRadius = 38.4f;
+                splashDamage = 70f;
+                trailColor = Color.red;
+                trailLength = 4;
+                trailWidth = 1.5f;
+                hitShake = 1.6f;
+                hitEffect = new MultiEffect(Fx.blastExplosion, Fx.fireHit);
+                status = StatusEffects.blasted;
+                ammoMultiplier = 1f;
+            }});
+
+            limitRange();
+        }};
+
+        simpleLightJavelinLauncher = new PowerTurret("simple-light-javelin-launcher") {{
+            description = "Cheap, but it can only use one time!";
+            requirements(Category.turret, ItemStack.with(copper, 80, lead, 80, graphite, 40, silicon, 120));
+            health = 300;
+            range = 640.0F;
+            shoot.firstShotDelay = 90f;
+            reload = 90.0F;
+            shake = 2.0F;
+            shootEffect = Fx.lancerLaserShoot;
+            smokeEffect = Fx.none;
+            heatColor = Color.red;
+            size = 2;
+            targetAir = false;
+            shootSound = Sounds.railgun;
+            consumePower(18.0F);
+
+            shootType = new PointBulletType(){{
+                shootEffect = Fx.instShoot;
+                hitEffect = Fx.instHit;
+                smokeEffect = Fx.smokeCloud;
+                trailEffect = Fx.instTrail;
+                despawnEffect = Fx.instBomb;
+                trailSpacing = 8.0F;
+                damage = 700f;
+                speed = range;
+                hitShake = 9.9F;
+                ammoMultiplier = 1.0F;
+            }};
+
+            limitRange(0f);
+        }
+
+            public class SimpleLightJavelinLauncherBuild extends PowerTurretBuild {
+                @Override
+                protected void shoot(BulletType type) {
+                    super.shoot(type);
+                    kill();
+                }
+            }
+        };
+
+        lightJavelinLauncher = new PowerTurret("light-javelin-launcher") {{
+            description = "Hit me with the light javelin!";
+            requirements(Category.turret, ItemStack.with(copper, 400, silicon, 700, titanium, 800, thorium, 800, surgeAlloy, 100));
+            health = 980;
+            range = 760.0F;
+            shoot.firstShotDelay = 90f;
+            recoil = 15f;
+            recoilTime = 30f;
+            reload = 90.0F;
+            shake = 5.0F;
+            shootEffect = Fx.lancerLaserShoot;
+            smokeEffect = Fx.none;
+            heatColor = Color.red;
+            size = 3;
+            targetAir = false;
+            shootSound = Sounds.railgun;
+            consumePower(15.0F);
+
+            shootType = new PointBulletType(){{
+                shootEffect = Fx.instShoot;
+                hitEffect = Fx.instHit;
+                smokeEffect = Fx.smokeCloud;
+                trailEffect = Fx.instTrail;
+                despawnEffect = Fx.instBomb;
+                trailSpacing = 8.0F;
+                damage = 820f;
+                speed = range;
+                hitShake = 9.9F;
+                ammoMultiplier = 1.0F;
+            }};
+
+            limitRange(0f);
         }};
 
         voidDrillMarkI = new VoidDrill("void-drill-mk1"){{
@@ -503,7 +869,7 @@ public class BFBlocks {
             researchCostMultiplier = 0.6f;
             drillTime = 9f;
             size = 3;
-            tier = 5;
+            tier = 6;
             itemCapacity = 200;
             lowestDrillTier = 1f;
             consumePower(80F);
@@ -516,9 +882,10 @@ public class BFBlocks {
             researchCostMultiplier = 0.6f;
             drillTime = 4f;
             size = 3;
-            tier = 6;
+            tier = 8;
             itemCapacity = 300;
             lowestDrillTier = 2f;
+            voidParticleChance = 0.0005f; // 0.05%
             consumePower(180F);
         }};
 
@@ -527,11 +894,13 @@ public class BFBlocks {
             requirements(Category.production, ItemStack.with(copper, 3000, graphite, 3000, silicon, 3000, titanium, 4000, plastanium, 3000,
                     thorium, 3000, phaseFabric, 2500, surgeAlloy, 1500, voidParticle, 200));
             researchCostMultiplier = 0.6f;
+            researchCostMultipliers.put(voidParticle, 0.01f);
             drillTime = 2f;
             size = 4;
-            tier = 7;
+            tier = 10;
             itemCapacity = 400;
             lowestDrillTier = 3f;
+            voidParticleChance = 0.008f; // 0.8%
             consumePower(300F);
         }};
 
@@ -551,10 +920,11 @@ public class BFBlocks {
         voidPowerGenerator = new OutputGenerator("void-power-generator"){{
             description = "Using void particles to generate power and a few dark matter.";
             requirements(Category.power, ItemStack.with(copper, 500, silicon, 300, titanium, 250, thorium, 200, plastanium, 200, voidParticle, 50));
+            researchCostMultipliers.put(voidParticle, 0.1f);
             health = 2880;
             size = 4;
             itemCapacity = 20;
-            itemDuration = 60f;
+            itemDuration = 600f;
             powerProduction = 40.0F;
             generateEffect = Fx.bigShockwave;
             generateEffectRange = 16;

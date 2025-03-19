@@ -1,6 +1,6 @@
 apply plugin: "java"
 
-version 'beta 1.0.7'
+version 'beta 1.0.8'
 
 sourceSets.main.java.srcDirs = ["src"]
 

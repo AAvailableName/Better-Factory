@@ -59,10 +59,11 @@ public class BFLiquids {
             flammability = 1.4f;
             temperature = 0.6f;
             boilPoint = 0.8f;
-            barColor = Color.white.a(0.8f);
+            barColor = Color.white.cpy().a(0.8f);
             gasColor = Color.clear;
             canStayOn.add(water);
             canStayOn.add(oil);
+            coolant = true;
         }};
     }
 }
