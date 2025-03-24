@@ -1,4 +1,4 @@
-package com.rmd.content.blocks;
+package com.rmd.content.blocks.heat;
 
 import java.util.concurrent.ConcurrentHashMap;
 

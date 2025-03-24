@@ -1,4 +1,4 @@
-package com.rmd.content.blocks;
+package com.rmd.content.blocks.heat;
 
 import arc.graphics.Color;
 import arc.math.Mathf;

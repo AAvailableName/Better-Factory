@@ -1,19 +1,18 @@
 package com.rmd.content.blocks;
 
-import arc.math.Mathf;
 import arc.util.Time;
 import mindustry.logic.LAccess;
 import mindustry.type.ItemStack;
-import mindustry.world.blocks.power.ConsumeGenerator;
+import mindustry.world.blocks.power.NuclearReactor;
 import mindustry.world.meta.Stat;
 import mindustry.world.meta.StatUnit;
 import mindustry.world.meta.StatValues;
 
-public class OutputGenerator extends ConsumeGenerator {
+public class OutputReactor extends NuclearReactor {
     public ItemStack outputItem;
     public ItemStack[] outputItems;
 
-    public OutputGenerator(String name) {
+    public OutputReactor(String name) {
         super(name);
         hasItems = true;
     }
@@ -42,20 +41,14 @@ public class OutputGenerator extends ConsumeGenerator {
         }
     }
 
-    public class OutputGeneratorBuild extends ConsumeGenerator.ConsumeGeneratorBuild {
+    public class OutputReactorBuild extends NuclearReactor.NuclearReactorBuild {
         public float progress;
-        public float warmup;
 
         @Override
         public void updateTile() {
             super.updateTile();
 
-            if (efficiency > 0.0F) {
-                progress += 1.0F / itemDuration * Time.delta;
-                warmup = Mathf.approachDelta(warmup, 1.0f, warmupSpeed);
-            } else {
-                warmup = Mathf.approachDelta(warmup, 0.0F, warmupSpeed);
-            }
+            progress += 1.0F / itemDuration * Time.delta;
 
             if (progress >= 1.0F) {
                 progress %= 1.0F;

@@ -1,15 +1,13 @@
 package com.rmd.content;
 
 import arc.graphics.Color;
-import com.rmd.content.blocks.EnvironmentalHeatCrafter;
-import com.rmd.content.blocks.EnvironmentalHeatProducer;
-import com.rmd.content.blocks.OutputGenerator;
-import com.rmd.content.blocks.VoidDrill;
+import com.rmd.content.blocks.*;
+import com.rmd.content.blocks.heat.EnvironmentalHeatCrafter;
+import com.rmd.content.blocks.heat.EnvironmentalHeatProducer;
 import mindustry.content.Fx;
 import mindustry.content.StatusEffects;
 import mindustry.entities.UnitSorts;
 import mindustry.entities.bullet.BasicBulletType;
-import mindustry.entities.bullet.BulletType;
 import mindustry.entities.bullet.PointBulletType;
 import mindustry.entities.effect.MultiEffect;
 import mindustry.gen.Sounds;
@@ -29,6 +27,7 @@ import static com.rmd.content.BFItems.*;
 import static com.rmd.content.BFLiquids.*;
 import static mindustry.content.Items.*;
 import static mindustry.content.Liquids.*;
+import static mindustry.type.ItemStack.with;
 
 public class BFBlocks {
     public static Block fractionalDistillationTower, catalyticCracker, steamCracker, ethyleneHydrator,
@@ -43,7 +42,261 @@ public class BFBlocks {
     public static Block doubleGunMarkIV, doubleGunMarkVIII, simpleLightJavelinLauncher, lightJavelinLauncher
             , tripleGunMarkV, tripleGunMarkVII, LPJ11CIWS, LMR3MRADS, destroyer;
 
+    public static Block etherCollector, etherCrystallizer, etherAmplifier, etherReassembler, etherFluidMixer,
+            etherAlloyCompressor, etherAlloyMelter, harmonicSteelSynchronizer, etherThoriumReactor;
+
+    public static Block singleOverdriveProjector;
+
+
     public static void load() {
+        loadOilIndustry();
+
+        loadHeaters();
+
+        loadTurrets();
+
+        loadVoidDrills();
+
+        loadGenerators();
+
+        loadEtherIndustry();
+
+        singleOverdriveProjector = new SingleOverdrive("single-overdrive-projector"){{
+            requirements(Category.effect, with(lead, 400, titanium, 220, silicon, 320, thorium, 300, plastanium, 300, surgeAlloy, 240));
+            consumePower(12f);
+            size = 1;
+            regionRotated1 = 2;
+            speedBoost = 3f;
+            useTime = 120f;
+            consumeItem(phaseFabric, 1);
+        }};
+    }
+
+    private static void loadEtherIndustry() {
+        // 12 /s ether => 1 /s etherCrystal
+        etherCollector = new GenericCrafter("ether-collector"){{
+            description = "Collect ether from air.";
+            requirements(Category.crafting, ItemStack.with(copper, 75, silicon, 90, titanium, 65, polyethylene, 120));
+            health = 800;
+            size = 2;
+            craftTime = 60f;
+            hasPower = true;
+            consumePower(2.4f);
+            hasLiquids = true;
+            outputsLiquid = true;
+            outputLiquid = new LiquidStack(ether, 1/15f);
+        }};
+
+        etherCrystallizer = new GenericCrafter("ether-crystallizer"){{
+            description = "Crystallize the ether.";
+            requirements(Category.crafting, ItemStack.with(copper, 80, lead, 100, silicon, 70, titanium, 40, polyethylene, 650));
+            health = 900;
+            size = 3;
+            craftTime = 480f;
+            hasPower = true;
+            hasLiquids = true;
+            hasItems = true;
+            outputItems = ItemStack.with(etherCrystal, 27, nickel, 6);
+            consumePower(4f);
+            consumeLiquid(ether, 0.675f);
+            consumeItem(lead, 6);
+        }};
+
+        etherReassembler = new GenericCrafter("ether-reassembler"){{
+            description = "Reassemble the ether with its core.";
+            requirements(Category.crafting, ItemStack.with(copper, 200, silicon, 180, titanium, 80, polyethylene, 800));
+            health = 1200;
+            size = 4;
+            craftTime = 60f;
+            hasPower = true;
+            hasLiquids = true;
+            hasItems = true;
+            outputsLiquid = true;
+            consumePower(4.0f);
+            consumeItem(etherCore, 5);
+            outputLiquid = new LiquidStack(ether, 1f);
+        }};
+
+        etherFluidMixer = new GenericCrafter("ether-fluid-mixer"){{
+            description = "Mix ether with cryofluid.";
+            requirements(Category.crafting, ItemStack.with(copper, 180, graphite, 50, silicon, 140, titanium, 75, polyethylene, 320));
+            health = 220;
+            size = 2;
+            craftTime = 60f;
+            hasPower = true;
+            hasLiquids = true;
+            hasItems = true;
+            outputsLiquid = true;
+            consumePower(4.0f);
+            consumeLiquid(cryofluid, 0.4f);
+            consumeItem(etherCrystal, 5);
+            outputLiquid = new LiquidStack(etherFluid, 0.4f);
+        }};
+
+        etherAlloyCompressor = new GenericCrafter("ether-alloy-compressor"){{
+            description = "Produce ether alloy.";
+            requirements(Category.crafting, ItemStack.with(copper, 120, silicon, 400, titanium, 320, thorium, 180, polyethylene, 600));
+            health = 1630;
+            size = 4;
+            craftTime = 720f;
+            hasPower = true;
+            hasItems = true;
+            consumePower(9.2f);
+            consumeItems(ItemStack.with(etherCore, 8, surgeAlloy, 3));
+            outputItem = new ItemStack(etherAlloy, 3);
+        }};
+
+        etherAlloyMelter = new GenericCrafter("ether-alloy-melter"){{
+            description = "Melt surge alloy with ether to produce ether alloy, faster than the compressor.";
+            requirements(Category.crafting, ItemStack.with(silicon, 600, titanium, 750, nickel, 200, thorium, 200, plastanium, 300, surgeAlloy, 50, polyethylene, 720));
+            health = 2250;
+            size = 5;
+            craftTime = 120f;
+            hasPower = true;
+            hasLiquids = true;
+            hasItems = true;
+            consumePower(21.5f);
+            consumeLiquid(etherFluid, 0.8f);
+            consumeItem(surgeAlloy, 6);
+            outputItem = new ItemStack(etherAlloy, 6);
+        }};
+
+        harmonicSteelSynchronizer = new GenericCrafter("harmonic-steel-synchronizer"){{
+            description = "Synchronize harmonic steel with ether.";
+            requirements(Category.crafting, ItemStack.with(silicon, 300, titanium, 800, nickel, 150, thorium, 400, plastanium, 500, surgeAlloy, 180));
+            health = 770;
+            size = 3;
+            craftTime = 400f;
+            hasPower = true;
+            hasItems = true;
+            consumePower(7.6f);
+            consumeItems(ItemStack.with(etherCrystal, 4, thorium, 8, plastanium, 8));
+            outputItem = new ItemStack(harmonicSteel, 4);
+        }};
+    }
+
+    private static void loadGenerators() {
+        ethanolPowerGenerator = new ConsumeGenerator("ethanol-power-generator"){{
+            description = "Burn ethanol to get a lot of power.";
+            requirements(Category.power, ItemStack.with(copper, 350, lead, 300, graphite, 250, silicon, 250, titanium, 200));
+            health = 980;
+            size = 3;
+            liquidCapacity = 120.0F;
+            powerProduction = 24.0F;
+            generateEffect = Fx.burning;
+            ambientSound = Sounds.smelter;
+            ambientSoundVolume = 0.08F;
+            consumeLiquid(ethanol, 1f);
+        }};
+
+        voidPowerGenerator = new OutputGenerator("void-power-generator"){{
+            description = "Using void particles to generate power and a few dark matter.";
+            requirements(Category.power, ItemStack.with(copper, 500, silicon, 300, titanium, 250, thorium, 200, plastanium, 200, voidParticle, 50));
+            researchCostMultipliers.put(voidParticle, 0.1f);
+            health = 2880;
+            size = 4;
+            itemCapacity = 20;
+            itemDuration = 600f;
+            powerProduction = 40.0F;
+            generateEffect = Fx.bigShockwave;
+            generateEffectRange = 16;
+            ambientSound = Sounds.shockBlast;
+            ambientSoundVolume = 0.16F;
+            consumeItem(voidParticle, 1);
+            outputItem = new ItemStack(darkMatter, 1);
+            explosionRadius = 38;
+            explosionDamage = 7000;
+        }};
+
+        etherAmplifier = new OutputGenerator("ether-amplifier"){{
+            description = "Amplify the energy of etherCrystal";
+            requirements(Category.power, ItemStack.with(copper, 300, silicon, 250, titanium, 420));
+            health = 1200;
+            size = 3;
+            itemDuration = 240f;
+            hasPower = true;
+            hasItems = true;
+            itemCapacity = 20;
+            consumePower(3.6f);
+            consumeItem(etherCrystal, 8);
+            powerProduction = 12f;
+            outputItem = new ItemStack(etherCore, 8);
+        }};
+
+        etherThoriumReactor = new OutputReactor("ether-thorium-reactor"){{
+            requirements(Category.power, with(polyethylene, 800, lead, 800, silicon, 500, graphite, 200, thorium, 200, harmonicSteel, 80));
+            ambientSound = Sounds.hum;
+            ambientSoundVolume = 0.3f;
+            size = 4;
+            health = 1160;
+            itemDuration = 180f;
+            powerProduction = 16f;
+            heating = 0.01f;
+            itemCapacity = 40;
+
+            consumeItem(thorium, 2);
+            consumeLiquids(LiquidStack.with(cryofluid, heating/coolantPower, ether, 1.93f)).update(false);
+            outputItems = ItemStack.with(nickel, 2, etherCrystal, 29);
+        }};
+    }
+
+    private static void loadVoidDrills() {
+        voidDrillMarkI = new VoidDrill("void-drill-mk1"){{
+            description = "A drill that drills through void.";
+            requirements(Category.production, ItemStack.with(copper, 1000, graphite, 800, silicon, 800, titanium, 1200, plastanium, 800,
+                    thorium, 800, phaseFabric, 800));
+            researchCostMultiplier = 0.6f;
+            drillTime = 18f;
+            size = 3;
+            tier = 4;
+            itemCapacity = 80;
+            consumePower(30F);
+        }};
+
+        voidDrillMarkII = new VoidDrill("void-drill-mk2"){{
+            description = "A drill that drills through void with a faster speed.";
+            requirements(Category.production, ItemStack.with(copper, 1800, graphite, 1600, silicon, 1600, titanium, 2000, plastanium, 1200,
+                    thorium, 1200, phaseFabric, 1200));
+            researchCostMultiplier = 0.6f;
+            drillTime = 9f;
+            size = 3;
+            tier = 6;
+            itemCapacity = 200;
+            lowestDrillTier = 1f;
+            consumePower(80F);
+        }};
+
+        voidDrillMarkIII = new VoidDrill("void-drill-mk3"){{
+            description = "This will never be the most effective one.";
+            requirements(Category.production, ItemStack.with(copper, 2500, graphite, 2000, silicon, 2000, titanium, 3000, plastanium, 2000,
+                    thorium, 2000, phaseFabric, 1600, surgeAlloy, 800));
+            researchCostMultiplier = 0.6f;
+            drillTime = 4f;
+            size = 3;
+            tier = 8;
+            itemCapacity = 300;
+            lowestDrillTier = 2f;
+            voidParticleChance = 0.0005f; // 0.05%
+            consumePower(180F);
+        }};
+
+        voidDrillMarkIV = new VoidDrill("void-drill-mk4"){{
+            description = "Faster, faster and faster.";
+            requirements(Category.production, ItemStack.with(copper, 3000, graphite, 3000, silicon, 3000, titanium, 4000, plastanium, 3000,
+                    thorium, 3000, phaseFabric, 2500, surgeAlloy, 1500, voidParticle, 200));
+            researchCostMultiplier = 0.6f;
+            researchCostMultipliers.put(voidParticle, 0.01f);
+            drillTime = 2f;
+            size = 4;
+            tier = 10;
+            itemCapacity = 400;
+            lowestDrillTier = 3f;
+            voidParticleChance = 0.008f; // 0.8%
+            consumePower(300F);
+        }};
+    }
+
+    private static void loadOilIndustry(){
         // oil -> naphtha + heavy oil + pyratite
         fractionalDistillationTower = new EnvironmentalHeatCrafter("fractional-distillation-tower"){{
             requirements(Category.crafting, ItemStack.with(copper, 330, graphite, 175, silicon, 240, titanium, 400));
@@ -191,7 +444,9 @@ public class BFBlocks {
             consumePower(6.25f);
             consumeItems(ItemStack.with(polyethylene, 12, titanium, 8));
         }};
+    }
 
+    private static void loadHeaters() {
         combustionHeater = new HeatProducer("combustion-heater"){{
             description = "Cheapness is its greatest advantage.";
             requirements(Category.crafting, ItemStack.with(copper, 80, graphite, 30, silicon, 25));
@@ -233,17 +488,19 @@ public class BFBlocks {
             consumePower(16f);
             range = 200f;
         }};
+    }
 
+    private static void loadTurrets() {
         doubleGunMarkIV = new ItemTurret("double-gun-mk4"){{
             description = "The twin-mounted anti-aircraft gun is capable of engaging both air and ground targets, and it is cost-effective!";
-            requirements(Category.turret, ItemStack.with(copper, 300, graphite, 300, silicon, 200, titanium, 180));
+            requirements(Category.turret, ItemStack.with(copper, 300, graphite, 300, silicon, 200, titanium, 220));
             researchCostMultiplier = 0.5f;
             health = 960;
             size = 3;
             reload = 24f;
             ammoPerShot = 5;
             rotateSpeed = 12f;
-            maxAmmo = 100;
+            maxAmmo = 200;
             inaccuracy = 4f;
             shoot.shotDelay = 3F;
             shoot.shots = 2;
@@ -293,7 +550,6 @@ public class BFBlocks {
                 trailWidth = 4f;
                 hitShake = 4f;
                 hitEffect = new MultiEffect(Fx.blastExplosion, Fx.fireHit);
-                status = StatusEffects.blasted;
             }});
 
             limitRange();
@@ -301,14 +557,14 @@ public class BFBlocks {
 
         doubleGunMarkVIII = new ItemTurret("double-gun-mk8"){{
             description = "The twin-mounted anti-aircraft gun is capable of engaging both air and ground targets!";
-            requirements(Category.turret, ItemStack.with(copper, 600, metaglass, 200, graphite, 600, silicon, 800, titanium, 1000));
+            requirements(Category.turret, ItemStack.with(copper, 600, metaglass, 200, graphite, 600, silicon, 800, titanium, 1500));
             researchCostMultiplier = 0.7f;
             health = 1080;
             size = 3;
             reload = 9f;
-            ammoPerShot = 5;
+            ammoPerShot = 10;
             rotateSpeed = 20f;
-            maxAmmo = 240;
+            maxAmmo = 400;
             inaccuracy = 2.2f;
             shoot.shotDelay = 3F;
             shoot.shots = 2;
@@ -326,7 +582,7 @@ public class BFBlocks {
             ammo(titanium, new BasicBulletType(8f, 182){{
                 lifetime = 400f;
                 splashDamageRadius = 48f;
-                splashDamage = 19f;
+                splashDamage = 14f;
                 trailColor = Color.yellow;
                 trailLength = 7;
                 trailWidth = 4f;
@@ -334,7 +590,7 @@ public class BFBlocks {
             }}, thorium, new BasicBulletType(8f, 244){{
                 lifetime = 400f;
                 splashDamageRadius = 64f;
-                splashDamage = 32f;
+                splashDamage = 19f;
                 trailColor = Color.yellow;
                 trailLength = 9;
                 trailWidth = 5f;
@@ -352,13 +608,12 @@ public class BFBlocks {
                 lifetime = 400f;
                 splashDamagePierce = true;
                 splashDamageRadius = 174f;
-                splashDamage = 270f;
+                splashDamage = 135f;
                 trailColor = Color.red;
                 trailLength = 9;
                 trailWidth = 4f;
                 hitShake = 4f;
                 hitEffect = new MultiEffect(Fx.blastExplosion, Fx.fireHit);
-                status = StatusEffects.blasted;
             }});
 
             limitRange();
@@ -370,7 +625,7 @@ public class BFBlocks {
             researchCostMultiplier = 1.4f;
             health = 1540;
             size = 4;
-            reload = 480f;
+            reload = 750f;
             ammoPerShot = 10;
             rotateSpeed = 6f;
             maxAmmo = 200;
@@ -392,8 +647,8 @@ public class BFBlocks {
                 targetAir = false;
                 lifetime = 400f;
                 collidesAir = false;
-                splashDamageRadius = 176f;
-                splashDamage = 64f;
+                splashDamageRadius = 72f;
+                splashDamage = 51f;
                 trailColor = Color.yellow;
                 trailLength = 12;
                 trailWidth = 6f;
@@ -404,8 +659,8 @@ public class BFBlocks {
                 targetAir = false;
                 lifetime = 400f;
                 collidesAir = false;
-                splashDamageRadius = 184f;
-                splashDamage = 75f;
+                splashDamageRadius = 85f;
+                splashDamage = 65f;
                 trailColor = Color.yellow;
                 trailLength = 14;
                 trailWidth = 6f;
@@ -417,7 +672,7 @@ public class BFBlocks {
                 lifetime = 400f;
                 collidesAir = false;
                 splashDamageRadius = 256f;
-                splashDamage = 30f;
+                splashDamage = 18f;
                 trailColor = Pal.lightOrange;
                 trailLength = 12;
                 trailWidth = 4f;
@@ -431,7 +686,7 @@ public class BFBlocks {
                 lifetime = 400f;
                 collidesAir = false;
                 splashDamageRadius = 256f;
-                splashDamage = 350f;
+                splashDamage = 240f;
                 trailColor = Color.red;
                 trailLength = 14;
                 trailWidth = 4f;
@@ -439,7 +694,6 @@ public class BFBlocks {
                 hitShake = 6f;
                 rangeChange = 80f;
                 hitEffect = new MultiEffect(Fx.blastExplosion, Fx.fireHit);
-                status = StatusEffects.blasted;
             }});
 
             limitRange();
@@ -447,11 +701,11 @@ public class BFBlocks {
 
         tripleGunMarkVII = new ItemTurret("triple-gun-mk7"){{
             description = "It has been built as the core of maritime defense, providing powerful firepower support.";
-            requirements(Category.turret, ItemStack.with(copper, 600, metaglass, 300, graphite, 750, silicon, 900, titanium, 1400, plastanium, 600));
+            requirements(Category.turret, ItemStack.with(copper, 600, metaglass, 300, graphite, 750, silicon, 900, titanium, 1400, plastanium, 800));
             researchCostMultiplier = 2.1f;
             health = 1980;
             size = 5;
-            reload = 1500f;
+            reload = 2600f;
             ammoPerShot = 50;
             rotateSpeed = 3f;
             maxAmmo = 300;
@@ -474,8 +728,8 @@ public class BFBlocks {
                 lifetime = 400f;
                 collidesAir = false;
                 splashDamagePierce = true;
-                splashDamageRadius = 224f;
-                splashDamage = 160f;
+                splashDamageRadius = 94f;
+                splashDamage = 80f;
                 reflectable = false;
                 trailColor = Color.yellow;
                 trailLength = 20;
@@ -488,8 +742,8 @@ public class BFBlocks {
                 lifetime = 400f;
                 collidesAir = false;
                 splashDamagePierce = true;
-                splashDamageRadius = 244f;
-                splashDamage = 200f;
+                splashDamageRadius = 105f;
+                splashDamage = 95f;
                 reflectable = false;
                 trailColor = Color.yellow;
                 trailLength = 22;
@@ -503,7 +757,7 @@ public class BFBlocks {
                 collidesAir = false;
                 splashDamagePierce = true;
                 splashDamageRadius = 376f;
-                splashDamage = 96f;
+                splashDamage = 44f;
                 reflectable = false;
                 trailColor = Pal.lightOrange;
                 trailLength = 18;
@@ -519,7 +773,7 @@ public class BFBlocks {
                 collidesAir = false;
                 splashDamagePierce = true;
                 splashDamageRadius = 376f;
-                splashDamage = 600f;
+                splashDamage = 370f;
                 reflectable = false;
                 trailColor = Color.red;
                 trailLength = 18;
@@ -528,7 +782,42 @@ public class BFBlocks {
                 hitShake = 9f;
                 rangeChange = 80f;
                 hitEffect = new MultiEffect(Fx.blastExplosion, Fx.fireHit);
-                status = StatusEffects.blasted;
+            }}, surgeAlloy, new BasicBulletType(22f, 1100){{
+                targetAir = false;
+                lifetime = 400f;
+                collidesAir = false;
+                splashDamagePierce = true;
+                splashDamageRadius = 112f;
+                splashDamage = 101f;
+                reflectable = false;
+                trailColor = Pal.surge;
+                trailLength = 29;
+                trailWidth = 6f;
+                buildingDamageMultiplier = 1.5f;
+                hitShake = 7f;
+                hitEffect = Fx.blastExplosion;
+                lightningDamage = 72f;
+                lightningLength = 8;
+                lightning = 12;
+                lightningColor = Pal.surge;
+                lightningLengthRand = 12;
+            }}, etherCrystal, new BasicBulletType(22f, 78){{
+                targetAir = false;
+                lifetime = 400f;
+                collidesAir = false;
+                splashDamagePierce = true;
+                splashDamageRadius = 32f;
+                splashDamage = 35f;
+                reflectable = false;
+                trailColor = Color.white.cpy().a(0.6f);
+                trailLength = 24;
+                trailWidth = 6f;
+                hitEffect = Fx.lightning;
+                lightningDamage = 102f;
+                lightningLength = 16;
+                lightning = 17;
+                lightningColor = Pal.surge;
+                lightningLengthRand = 12;
             }});
 
             limitRange();
@@ -775,9 +1064,9 @@ public class BFBlocks {
             limitRange();
         }};
 
-        simpleLightJavelinLauncher = new PowerTurret("simple-light-javelin-launcher") {{
+        simpleLightJavelinLauncher = new DisposableTurret("simple-light-javelin-launcher") {{
             description = "Cheap, but it can only use one time!";
-            requirements(Category.turret, ItemStack.with(copper, 80, lead, 80, graphite, 40, silicon, 120));
+            requirements(Category.turret, ItemStack.with(copper, 80, lead, 80, graphite, 40, silicon, 120, etherAlloy, 20));
             health = 300;
             range = 640.0F;
             shoot.firstShotDelay = 90f;
@@ -797,28 +1086,20 @@ public class BFBlocks {
                 smokeEffect = Fx.smokeCloud;
                 trailEffect = Fx.instTrail;
                 despawnEffect = Fx.instBomb;
-                trailSpacing = 8.0F;
-                damage = 700f;
+                trailSpacing = 12.0F;
+                splashDamage = 700f;
+                splashDamageRadius = 8f;
                 speed = range;
                 hitShake = 9.9F;
                 ammoMultiplier = 1.0F;
             }};
 
             limitRange(0f);
-        }
-
-            public class SimpleLightJavelinLauncherBuild extends PowerTurretBuild {
-                @Override
-                protected void shoot(BulletType type) {
-                    super.shoot(type);
-                    kill();
-                }
-            }
-        };
+        }};
 
         lightJavelinLauncher = new PowerTurret("light-javelin-launcher") {{
             description = "Hit me with the light javelin!";
-            requirements(Category.turret, ItemStack.with(copper, 400, silicon, 700, titanium, 800, thorium, 800, surgeAlloy, 100));
+            requirements(Category.turret, ItemStack.with(copper, 400, silicon, 700, titanium, 400, thorium, 400, surgeAlloy, 100, etherAlloy, 100));
             health = 980;
             range = 760.0F;
             shoot.firstShotDelay = 90f;
@@ -840,100 +1121,15 @@ public class BFBlocks {
                 smokeEffect = Fx.smokeCloud;
                 trailEffect = Fx.instTrail;
                 despawnEffect = Fx.instBomb;
-                trailSpacing = 8.0F;
-                damage = 820f;
+                trailSpacing = 12.0F;
+                splashDamage = 820f;
+                splashDamageRadius = 8f;
                 speed = range;
                 hitShake = 9.9F;
                 ammoMultiplier = 1.0F;
             }};
 
             limitRange(0f);
-        }};
-
-        voidDrillMarkI = new VoidDrill("void-drill-mk1"){{
-            description = "A drill that drills through void.";
-            requirements(Category.production, ItemStack.with(copper, 1000, graphite, 800, silicon, 800, titanium, 1200, plastanium, 800,
-                    thorium, 800, phaseFabric, 800));
-            researchCostMultiplier = 0.6f;
-            drillTime = 18f;
-            size = 3;
-            tier = 4;
-            itemCapacity = 80;
-            consumePower(30F);
-        }};
-
-        voidDrillMarkII = new VoidDrill("void-drill-mk2"){{
-            description = "A drill that drills through void with a faster speed.";
-            requirements(Category.production, ItemStack.with(copper, 1800, graphite, 1600, silicon, 1600, titanium, 2000, plastanium, 1200,
-                    thorium, 1200, phaseFabric, 1200));
-            researchCostMultiplier = 0.6f;
-            drillTime = 9f;
-            size = 3;
-            tier = 6;
-            itemCapacity = 200;
-            lowestDrillTier = 1f;
-            consumePower(80F);
-        }};
-
-        voidDrillMarkIII = new VoidDrill("void-drill-mk3"){{
-            description = "This will never be the most effective one.";
-            requirements(Category.production, ItemStack.with(copper, 2500, graphite, 2000, silicon, 2000, titanium, 3000, plastanium, 2000,
-                    thorium, 2000, phaseFabric, 1600, surgeAlloy, 800));
-            researchCostMultiplier = 0.6f;
-            drillTime = 4f;
-            size = 3;
-            tier = 8;
-            itemCapacity = 300;
-            lowestDrillTier = 2f;
-            voidParticleChance = 0.0005f; // 0.05%
-            consumePower(180F);
-        }};
-
-        voidDrillMarkIV = new VoidDrill("void-drill-mk4"){{
-            description = "Faster, faster and faster.";
-            requirements(Category.production, ItemStack.with(copper, 3000, graphite, 3000, silicon, 3000, titanium, 4000, plastanium, 3000,
-                    thorium, 3000, phaseFabric, 2500, surgeAlloy, 1500, voidParticle, 200));
-            researchCostMultiplier = 0.6f;
-            researchCostMultipliers.put(voidParticle, 0.01f);
-            drillTime = 2f;
-            size = 4;
-            tier = 10;
-            itemCapacity = 400;
-            lowestDrillTier = 3f;
-            voidParticleChance = 0.008f; // 0.8%
-            consumePower(300F);
-        }};
-
-        ethanolPowerGenerator = new ConsumeGenerator("ethanol-power-generator"){{
-            description = "Burn ethanol to get a lot of power.";
-            requirements(Category.power, ItemStack.with(copper, 350, lead, 300, graphite, 250, silicon, 250, titanium, 200));
-            health = 980;
-            size = 3;
-            liquidCapacity = 120.0F;
-            powerProduction = 24.0F;
-            generateEffect = Fx.burning;
-            ambientSound = Sounds.smelter;
-            ambientSoundVolume = 0.08F;
-            consumeLiquid(ethanol, 1f);
-        }};
-
-        voidPowerGenerator = new OutputGenerator("void-power-generator"){{
-            description = "Using void particles to generate power and a few dark matter.";
-            requirements(Category.power, ItemStack.with(copper, 500, silicon, 300, titanium, 250, thorium, 200, plastanium, 200, voidParticle, 50));
-            researchCostMultipliers.put(voidParticle, 0.1f);
-            health = 2880;
-            size = 4;
-            itemCapacity = 20;
-            itemDuration = 600f;
-            powerProduction = 40.0F;
-            generateEffect = Fx.bigShockwave;
-            generateEffectRange = 16;
-            ambientSound = Sounds.shockBlast;
-            ambientSoundVolume = 0.16F;
-            consumeItem(voidParticle, 1);
-            outputItem = new ItemStack(darkMatter, 1);
-            explosionRadius = 38;
-            explosionDamage = 7000;
         }};
     }
 }

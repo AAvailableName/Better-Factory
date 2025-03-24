@@ -7,10 +7,11 @@ import mindustry.ctype.UnlockableContent;
 import mindustry.game.Objectives;
 import mindustry.game.Objectives.Objective;
 import mindustry.type.ItemStack;
+import mindustry.type.Planet;
+import mindustry.type.SectorPreset;
 
 import static com.rmd.content.BFBlocks.*;
-import static com.rmd.content.BFItems.darkMatter;
-import static com.rmd.content.BFItems.voidParticle;
+import static com.rmd.content.BFItems.*;
 import static com.rmd.content.BFLiquids.ethanol;
 import static com.rmd.content.BFSectors.fireImpact;
 import static mindustry.content.Blocks.*;
@@ -25,7 +26,7 @@ public final class BFTechTree {
     public static void load() {
         // oil industry
         margeNode(sporePress, () -> {
-            node(fractionalDistillationTower, Seq.with(new Objectives.Produce(oil)), () -> {
+            node(fractionalDistillationTower, Seq.with(produce(oil)), () -> {
                 node(catalyticCracker);
 
                 node(steamCracker, () -> {
@@ -51,41 +52,59 @@ public final class BFTechTree {
             });
 
             // power generator
-            node(ethanolPowerGenerator, Seq.with(new Objectives.Produce(ethanol)), () -> {
-                node(voidPowerGenerator, Seq.with(new Objectives.Produce(voidParticle)));
+            node(ethanolPowerGenerator, Seq.with(produce(ethanol)), () -> {
+                node(voidPowerGenerator, Seq.with(produce(voidParticle)));
             });
         });
 
         // weapon
         margeNode(duo, () -> {
-            node(doubleGunMarkIV, Seq.with(new Objectives.Produce(titanium)), () -> {
+            node(simpleLightJavelinLauncher, Seq.with(sectorComplete(fireImpact), research(lancer), produce(etherAlloy)), () -> {
+                node(lightJavelinLauncher, Seq.with(research(foreshadow)));
+            });
+
+            node(doubleGunMarkIV, Seq.with(produce(titanium)), () -> {
                 node(doubleGunMarkVIII);
             });
 
-            node(tripleGunMarkV, Seq.with(new Objectives.SectorComplete(windsweptIslands), new Objectives.Produce(plastanium)), () -> {
-                node(tripleGunMarkVII, Seq.with(new Objectives.SectorComplete(fireImpact)), () -> {
-                    node(destroyer, Seq.with(new Objectives.Produce(voidParticle), new Objectives.Produce(darkMatter)));
+            node(tripleGunMarkV, Seq.with(sectorComplete(windsweptIslands), produce(plastanium)), () -> {
+                node(tripleGunMarkVII, Seq.with(sectorComplete(fireImpact)), () -> {
+                    node(destroyer, Seq.with(produce(voidParticle), produce(darkMatter)));
                 });
             });
 
-            node(LMR3MRADS, Seq.with(new Objectives.SectorComplete(fireImpact)), () -> {
+            node(LMR3MRADS, Seq.with(sectorComplete(fireImpact)), () -> {
                 node(LPJ11CIWS);
             });
         });
 
-        margeNode(lancer, () -> {
-            node(simpleLightJavelinLauncher, Seq.with(new Objectives.SectorComplete(fireImpact)), () -> {
-                node(lightJavelinLauncher, Seq.with(new Objectives.Research(foreshadow), new Objectives.Produce(surgeAlloy)));
+        // ether
+        node(etherCollector, Seq.with(research(thoriumReactor)), () -> {
+            node(etherCrystallizer, () -> {
+                node(etherReassembler, () -> {
+                    node(etherAlloyCompressor, Seq.with(produce(surgeAlloy)), () -> {
+                        node(etherAlloyMelter);
+                    });
+                });
+
+                node(etherFluidMixer, () -> {
+                    node(harmonicSteelSynchronizer);
+                });
             });
+        });
+
+        margeNode(thoriumReactor, () -> {
+            node(etherAmplifier, Seq.with(produce(etherCrystal)));
+
+            node(etherThoriumReactor, Seq.with(produce(etherCrystal)));
         });
 
         // drill
         margeNode(laserDrill, () -> {
-            node(voidDrillMarkI, Seq.with(new Objectives.Produce(titanium), new Objectives.Produce(thorium),
-                    new Objectives.Produce(plastanium), new Objectives.Produce(phaseFabric)), () -> {
+            node(voidDrillMarkI, Seq.with(produce(titanium), produce(thorium), produce(plastanium), produce(phaseFabric)), () -> {
                 node(voidDrillMarkII, () -> {
-                    node(voidDrillMarkIII, Seq.with(new Objectives.Produce(surgeAlloy)), () -> {
-                        node(voidDrillMarkIV, Seq.with(new Objectives.Produce(voidParticle)));
+                    node(voidDrillMarkIII, Seq.with(produce(surgeAlloy)), () -> {
+                        node(voidDrillMarkIV, Seq.with(produce(voidParticle)));
                     });
                 });
             });
@@ -93,7 +112,7 @@ public final class BFTechTree {
 
         // sector preset
         margeNode(impact0078, () -> {
-            node(fireImpact, Seq.with(new Objectives.Research(tripleGunMarkV)));
+            node(fireImpact, Seq.with(research(tripleGunMarkV)));
         });
     }
 
@@ -132,5 +151,25 @@ public final class BFTechTree {
     private static void node(UnlockableContent block) {
         node(block, () -> {
         });
+    }
+
+    private static Objective produce(UnlockableContent content) {
+        return new Objectives.Produce(content);
+    }
+
+    private static Objective research(UnlockableContent content) {
+        return new Objectives.Research(content);
+    }
+
+    private static Objective sectorComplete(SectorPreset sector) {
+        return new Objectives.SectorComplete(sector);
+    }
+
+    private static Objective onSector(SectorPreset sector) {
+        return new Objectives.OnSector(sector);
+    }
+
+    private static Objective onPlanet(Planet planet) {
+        return new Objectives.OnPlanet(planet);
     }
 }

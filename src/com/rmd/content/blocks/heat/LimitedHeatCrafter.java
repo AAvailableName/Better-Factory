@@ -1,4 +1,4 @@
-package com.rmd.content.blocks;
+package com.rmd.content.blocks.heat;
 
 import mindustry.world.blocks.production.HeatCrafter;
 import mindustry.world.meta.Stat;
