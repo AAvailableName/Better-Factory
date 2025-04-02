@@ -6,7 +6,6 @@ import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.Lines;
 import arc.math.Mathf;
 import arc.math.geom.Geometry;
-import arc.math.geom.Point2;
 import arc.util.Time;
 import arc.util.Tmp;
 import arc.util.io.Reads;
@@ -16,7 +15,6 @@ import mindustry.graphics.Drawf;
 import mindustry.graphics.Pal;
 import mindustry.ui.Bar;
 import mindustry.world.Block;
-import mindustry.world.blocks.defense.OverdriveProjector;
 import mindustry.world.consumers.ConsumeItems;
 import mindustry.world.meta.*;
 
@@ -29,6 +27,8 @@ public class SingleOverdrive extends Block {
     public float speedBoost = 1.5f;
     public float speedBoostPhase = 0.75f;
     public float useTime = 400f;
+    public float damage = 0f; // damage per second
+    public float percentDamage = 0f; // damagePercent per second
     public boolean hasBoost = true;
     public Color baseColor = Color.valueOf("feb380");
     public Color phaseColor = Color.valueOf("ffd59e");
@@ -55,7 +55,6 @@ public class SingleOverdrive extends Block {
         return false;
     }
 
-
     @Override
     public void setStats(){
         stats.timePeriod = useTime;
@@ -68,12 +67,14 @@ public class SingleOverdrive extends Block {
             stats.remove(Stat.booster);
             stats.add(Stat.booster, StatValues.itemBoosters("+{0}%", stats.timePeriod, speedBoostPhase * 100f, 0, items.items, this::consumesItem));
         }
+
+        if (damage > 0f || percentDamage > 0f) stats.add(Stat.damage, damage + " + " + percentDamage + StatUnit.percent.localized() + StatUnit.perSecond.localized());
     }
 
     @Override
     public void setBars(){
         super.setBars();
-        addBar("boost", (OverdriveProjector.OverdriveBuild entity) -> new Bar(() -> Core.bundle.format("bar.boost", Mathf.round(Math.max((entity.realBoost() * 100 - 100), 0))), () -> Pal.accent, () -> entity.realBoost() / (hasBoost ? speedBoost + speedBoostPhase : speedBoost)));
+        addBar("boost", (SingleOverdriveBuild entity) -> new Bar(() -> Core.bundle.format("bar.boost", Mathf.round(Math.max((entity.realBoost() * 100 - 100), 0))), () -> Pal.accent, () -> entity.realBoost() / (hasBoost ? speedBoost + speedBoostPhase : speedBoost)));
     }
 
     public class SingleOverdriveBuild extends Building {
@@ -97,11 +98,12 @@ public class SingleOverdrive extends Block {
             if(charge >= reload){
                 charge = 0f;
 
-                Point2 p = getEdges()[regionRotated1-1];
-                Building b = nearby(p.x, p.y);
+                Building b = nearby(rotation);
 
-                if (b.team == team && b.block.canOverdrive) {
-                    applyBoost(realBoost(), reload + 1f);
+                if (b != null && b.team == team && b.block.canOverdrive) {
+                    b.applyBoost(realBoost(), reload + 1f);
+                    if (damage > 0f) b.damagePierce(damage * Time.delta);
+                    if (percentDamage > 0f) b.damagePierce(b.maxHealth * percentDamage / 100 * Time.delta);
                 }
             }
 
@@ -116,10 +118,9 @@ public class SingleOverdrive extends Block {
 
         @Override
         public void drawSelect(){
-            Point2 p = getEdges()[regionRotated1-1];
-            Building b = nearby(p.x, p.y);
+            Building b = nearby(rotation);
 
-            if (b.team == team && b.block.canOverdrive) {
+            if (b != null && b.team == team && b.block.canOverdrive) {
                 Drawf.selected(b, Tmp.c1.set(baseColor).a(Mathf.absin(4f, 1f)));
             }
         }

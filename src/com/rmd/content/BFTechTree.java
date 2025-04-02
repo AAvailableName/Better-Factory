@@ -13,6 +13,8 @@ import mindustry.type.SectorPreset;
 import static com.rmd.content.BFBlocks.*;
 import static com.rmd.content.BFItems.*;
 import static com.rmd.content.BFLiquids.ethanol;
+import static com.rmd.content.BFLiquids.ether;
+import static com.rmd.content.BFSectors.experimentField;
 import static com.rmd.content.BFSectors.fireImpact;
 import static mindustry.content.Blocks.*;
 import static mindustry.content.Items.*;
@@ -76,6 +78,15 @@ public final class BFTechTree {
             node(LMR3MRADS, Seq.with(sectorComplete(fireImpact)), () -> {
                 node(LPJ11CIWS);
             });
+
+            node(damageImproveComponent, Seq.with(research(etherStrike)));
+
+            node(etherStrike, Seq.with(produce(ether), produce(harmonicSteel), sectorComplete(experimentField)), () -> {
+                node(damageImproveComponent);
+                node(rangeImproveComponent);
+                node(speedImproveComponent);
+                node(powerEfficiencyComponent);
+            });
         });
 
         // ether
@@ -101,7 +112,7 @@ public final class BFTechTree {
 
         // drill
         margeNode(laserDrill, () -> {
-            node(voidDrillMarkI, Seq.with(produce(titanium), produce(thorium), produce(plastanium), produce(phaseFabric)), () -> {
+            node(voidDrillMarkI, Seq.with(produce(titanium), produce(thorium), produce(plastanium), produce(phaseFabric), sectorComplete(experimentField)), () -> {
                 node(voidDrillMarkII, () -> {
                     node(voidDrillMarkIII, Seq.with(produce(surgeAlloy)), () -> {
                         node(voidDrillMarkIV, Seq.with(produce(voidParticle)));
@@ -110,9 +121,16 @@ public final class BFTechTree {
             });
         });
 
+        // overdrive
+        margeNode(overdriveProjector, () -> {
+            node(singleOverdriveProjector, Seq.with(produce(surgeAlloy)));
+        });
+
         // sector preset
         margeNode(impact0078, () -> {
-            node(fireImpact, Seq.with(research(tripleGunMarkV)));
+            node(fireImpact, Seq.with(research(tripleGunMarkV)), () -> {
+                node(experimentField, Seq.with(research(laserDrill), produce(ether)));
+            });
         });
     }
 

@@ -32,10 +32,5 @@ public class EnvironmentalHeatCrafter extends LimitedHeatCrafter {
                 envHeat.put(producer, Math.min(Math.max(heat, 0f), producer.heat));
             }
         }
-
-        @Override
-        public float heat() {
-            return heat;
-        }
     }
 }
