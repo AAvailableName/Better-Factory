@@ -9,6 +9,8 @@ public class Main extends Mod{
         BFItems.load();
         BFLiquids.load();
 
+        BFStatusEffects.load();
+
         BFBlocks.load();
         BFSectors.load();
 

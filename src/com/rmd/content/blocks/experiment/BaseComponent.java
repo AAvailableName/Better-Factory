@@ -32,11 +32,11 @@ public class BaseComponent extends Block {
         super.setStats();
 
         if (powerConsumptionIncrease != 0f) {
-            stats.add(new Stat("powerUseIncrease", StatCat.power), "[YELLOW]" + ((powerConsumptionIncrease > 0f) ? "+" : "") + powerConsumptionIncrease * 100 + StatUnit.perSecond.localized());
+            stats.add(new Stat("powerUseIncrease", StatCat.power), "[YELLOW]" + ((powerConsumptionIncrease > 0f) ? "+" : "") + powerConsumptionIncrease * 60 + StatUnit.perSecond.localized());
         }
 
         if (extraPowerConsumption != 0f) {
-            stats.add(new Stat("powerMultiplier", StatCat.power), "[YELLOW]" + ((extraPowerConsumption > 0f) ? "+" : "") + extraPowerConsumption * 60  + StatUnit.percent.localized());
+            stats.add(new Stat("powerMultiplier", StatCat.power), "[YELLOW]" + ((extraPowerConsumption > 0f) ? "+" : "") + extraPowerConsumption * 100  + StatUnit.percent.localized());
         }
     }
 
@@ -80,7 +80,7 @@ public class BaseComponent extends Block {
 
         @Override
         public float extraPowerConsume() {
-            return extraPowerConsumption;
+            return powerConsumptionIncrease;
         }
 
         @Override

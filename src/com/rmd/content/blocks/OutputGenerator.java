@@ -62,14 +62,26 @@ public class OutputGenerator extends ConsumeGenerator {
                 warmup = Mathf.approachDelta(warmup, 0.0F, warmupSpeed);
             }
 
-            if (outputItems == null) return;
-
             if (progress >= 1.0F) {
                 progress %= 1.0F;
-                items.add(outputItem.item, outputItem.amount);
+                if(outputItems != null) {
+                    for (var output : outputItems) {
+                        for (int i = 0; i < output.amount; i++) {
+                            offload(output.item);
+                        }
+                    }
+                }
             }
 
-            dump(outputItem.item);
+            dumpOutputs();
+        }
+
+        public void dumpOutputs(){
+            if(outputItems != null && timer(timerDump, dumpTime / timeScale)){
+                for(ItemStack output : outputItems){
+                    dump(output.item);
+                }
+            }
         }
 
         @Override

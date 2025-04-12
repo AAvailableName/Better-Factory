@@ -11,16 +11,16 @@ public abstract class ExperimentalTurret extends Turret {
 
     public abstract class ExperimentalTurretBuild extends TurretBuild {
         protected Seq<ExperimentalBuildingComponent> components = new Seq<>();
-        protected float originRangeChange = -1f;
+        protected float originRange = -1f;
 
         public void refresh() {
             components.clear();
-            if (originRangeChange != -1f && getBulletType() != null) getBulletType().rangeChange = originRangeChange;
+            if (originRange != -1f && getBulletType() != null) getBulletType().range = originRange;
         }
 
         @Override
         public void update() {
-            if (originRangeChange == -1f && getBulletType() != null) originRangeChange = getBulletType().rangeChange;
+            if (originRange == -1f && getBulletType() != null) originRange = getBulletType().range;
 
             refreshPower();
 

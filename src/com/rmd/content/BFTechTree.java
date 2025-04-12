@@ -26,12 +26,24 @@ public final class BFTechTree {
     static TechTree.TechNode context = null;
 
     public static void load() {
+        margeNode(multiPress, () -> {
+            node(fastGraphitePresser, Seq.with(produce(titanium)));
+        });
+
+        margeNode(siliconSmelter, () -> {
+            node(hugeSiliconSmelter);
+        });
+
         // oil industry
         margeNode(sporePress, () -> {
             node(fractionalDistillationTower, Seq.with(produce(oil)), () -> {
                 node(catalyticCracker);
 
                 node(steamCracker, () -> {
+                    node(largeSteamCracker, () -> {
+                        node(integratedRefinery);
+                    });
+
                     node(polyethylenePolymerizer, () -> {
                         node(plastaniumInjector, () -> {
                             node(largePlastaniumInjector);
@@ -61,6 +73,10 @@ public final class BFTechTree {
 
         // weapon
         margeNode(duo, () -> {
+            node(lightingPoint, Seq.with(produce(surgeAlloy)), () -> {
+                node(particleStream);
+            });
+
             node(simpleLightJavelinLauncher, Seq.with(sectorComplete(fireImpact), research(lancer), produce(etherAlloy)), () -> {
                 node(lightJavelinLauncher, Seq.with(research(foreshadow)));
             });
@@ -73,6 +89,8 @@ public final class BFTechTree {
                 node(tripleGunMarkVII, Seq.with(sectorComplete(fireImpact)), () -> {
                     node(destroyer, Seq.with(produce(voidParticle), produce(darkMatter)));
                 });
+
+                node(stella);
             });
 
             node(LMR3MRADS, Seq.with(sectorComplete(fireImpact)), () -> {
@@ -83,7 +101,6 @@ public final class BFTechTree {
 
             node(etherStrike, Seq.with(produce(ether), produce(harmonicSteel), sectorComplete(experimentField)), () -> {
                 node(damageImproveComponent);
-                node(rangeImproveComponent);
                 node(speedImproveComponent);
                 node(powerEfficiencyComponent);
             });
@@ -112,6 +129,10 @@ public final class BFTechTree {
 
         // drill
         margeNode(laserDrill, () -> {
+            node((largeLaserDrill), () -> {
+                node(fastDrill);
+            });
+
             node(voidDrillMarkI, Seq.with(produce(titanium), produce(thorium), produce(plastanium), produce(phaseFabric), sectorComplete(experimentField)), () -> {
                 node(voidDrillMarkII, () -> {
                     node(voidDrillMarkIII, Seq.with(produce(surgeAlloy)), () -> {
@@ -123,7 +144,9 @@ public final class BFTechTree {
 
         // overdrive
         margeNode(overdriveProjector, () -> {
-            node(singleOverdriveProjector, Seq.with(produce(surgeAlloy)));
+            node(singleOverdriveProjector, Seq.with(produce(surgeAlloy)), () -> {
+                node(singleQuickOverdriveProjector);
+            });
         });
 
         // sector preset

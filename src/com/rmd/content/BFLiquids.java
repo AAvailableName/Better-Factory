@@ -69,11 +69,13 @@ public class BFLiquids {
         ether = new Liquid("ether", Color.valueOf("7F00FF")){{
             barColor = Color.valueOf("7F00FF");
             gasColor = Color.valueOf("aa59fc");
+            coolant = false;
         }};
 
         etherFluid = new Liquid("ether-fluid", Color.valueOf("9e6bfe")){{
             barColor = Color.valueOf("9e6bfe");
             gasColor = Color.valueOf("6819f9");
+            coolant = false;
         }};
     }
 }
