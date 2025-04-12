@@ -10,7 +10,7 @@ repositories{
     maven{ url 'https://www.jitpack.io' }
 }
 
-java{
+tasks.withType(JavaCompile).configureEach {
     targetCompatibility = 8
     sourceCompatibility = JavaVersion.VERSION_17
     options.encoding = 'UTF-8'
